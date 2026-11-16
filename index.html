@@ -1,9 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flora Escolar | Enciclopédia Botânica</title>
+<title>Herbário do Sertão | Catálogo Botânico</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
 :root {
@@ -171,26 +174,7 @@ textarea {min-height:90px;resize:vertical}
     margin:18px 0;
     font-size:14px;
 }
-
 .vazio {padding:30px;text-align:center;color:var(--cinza)}
-.tag {
-    display:inline-block;
-    padding:5px 9px;
-    margin:5px 5px 0 0;
-    border-radius:20px;
-    background:var(--claro);
-    color:var(--verde);
-    font-size:12px;
-    font-weight:bold;
-}
-.tag.revisao {background:#fff0d8;color:#805817}
-.nota-tecnica {font-size:13px;color:var(--cinza);margin-top:8px}
-input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible {
-    outline:3px solid #9acb9d;
-    outline-offset:2px;
-}
-button:disabled {opacity:.6;cursor:not-allowed}
-
 #preview,#identPreview {
     max-width:220px;
     max-height:180px;
@@ -224,16 +208,19 @@ footer p {font-size:13px}
     </div>
 
     <nav>
-        <button type="button" class="active" aria-pressed="true" onclick="abrirTela('inicio',this)">Início</button>
-        <button type="button" aria-pressed="false" onclick="abrirTela('catalogo',this)">Catálogo</button>
-        <button type="button" aria-pressed="false" onclick="abrirTela('avancada',this)">Busca avançada</button>
-        <button type="button" aria-pressed="false" onclick="abrirTela('identificar',this)">Identificar planta</button>
-        <button type="button" aria-pressed="false" onclick="abrirTela('sobre',this)">Sobre o projeto</button>
-        <button type="button" aria-pressed="false" onclick="abrirTela('admin',this)">Cadastrar planta</button>
+        <button class="active" onclick="abrirTela('inicio',this)">Início</button>
+        <button onclick="abrirTela('catalogo',this)">Catálogo</button>
+        <button onclick="abrirTela('avancada',this)">Busca avançada</button>
+        <button onclick="abrirTela('identificar',this)">Identificar planta</button>
+        <button onclick="abrirTela('sobre',this)">Sobre o projeto</button>
+        <button onclick="abrirTela('admin',this)">Cadastrar planta</button>
     </nav>
 </header>
 
 <main>
+<div id="avisoConfiguracao" class="alerta" hidden style="max-width:1150px;margin:20px auto;padding:15px 20px">
+  <strong>Configuração pendente:</strong> o site ainda precisa receber a URL e a chave pública do projeto Supabase. Consulte o arquivo SQL e o guia de instalação entregues junto com este HTML.
+</div>
 
 <!-- INÍCIO -->
 <section class="tela ativa" id="inicio">
@@ -291,7 +278,6 @@ footer p {font-size:13px}
     <div class="painel" style="margin-top:30px">
         <h2>🌿 Nosso acervo</h2>
         <p id="totalInicio">0 espécies cadastradas.</p>
-        <p class="nota-tecnica">Os registros são armazenados neste navegador. Para compartilhar o acervo entre computadores ou permitir edição simultânea, será necessário integrar o projeto a um banco de dados e a um servidor.</p>
     </div>
 </section>
 
@@ -301,18 +287,10 @@ footer p {font-size:13px}
     <p>Consulte as plantas cadastradas na enciclopédia.</p>
 
     <div class="grade" style="margin:20px 0">
-        <input id="pesquisa" aria-label="Pesquisar no catálogo" placeholder="Pesquisar pelo nome..."
+        <input id="pesquisa" placeholder="Pesquisar pelo nome..."
         oninput="mostrarCatalogo()">
 
-        <select id="filtroCategoria" aria-label="Filtrar por categoria" onchange="mostrarCatalogo()">
-            <option value="">Todas as categorias</option>
-            <option value="medicinal">Medicinais</option>
-            <option value="exotica">Exóticas</option>
-            <option value="nativa">Nativas do Brasil</option>
-            <option value="caatinga">Nativas da Caatinga</option>
-            <option value="outra">Outras</option>
-        </select>
-        <select id="ordem" aria-label="Ordenar catálogo" onchange="mostrarCatalogo()">
+        <select id="ordem" onchange="mostrarCatalogo()">
             <option value="az">Ordem alfabética: A - Z</option>
             <option value="za">Ordem alfabética: Z - A</option>
         </select>
@@ -362,7 +340,7 @@ footer p {font-size:13px}
         </p>
 
         <label>Fotografia da planta</label>
-        <input type="file" id="fotoIdent" aria-label="Fotografia para observação"
+        <input type="file" id="fotoIdent"
         accept="image/*" onchange="previewIdentificacao(event)">
 
         <img id="identPreview" alt="Prévia da fotografia">
@@ -424,18 +402,36 @@ footer p {font-size:13px}
             instituições e bases científicas, como:
         </p>
         <p>
-            <a href="https://www.gbif.org/" target="_blank" rel="noopener noreferrer">GBIF</a><br>
-            <a href="https://powo.science.kew.org/" target="_blank" rel="noopener noreferrer">Plants of the World Online</a><br>
-            <a href="https://floradobrasil.jbrj.gov.br/" target="_blank" rel="noopener noreferrer">Flora e Funga do Brasil</a><br>
-            <a href="https://www.in.gov.br/" target="_blank" rel="noopener noreferrer">Diário Oficial da União</a>
+            <a href="https://www.gbif.org/" target="_blank">GBIF</a><br>
+            <a href="https://powo.science.kew.org/" target="_blank">Plants of the World Online</a><br>
+            <a href="https://floradobrasil.jbrj.gov.br/" target="_blank">Flora e Funga do Brasil</a><br>
+            <a href="https://www.in.gov.br/" target="_blank">Diário Oficial da União</a>
         </p>
     </div>
 </section>
 
 <!-- CADASTRO -->
 <section class="tela" id="admin">
-    <h2>Cadastro de nova espécie 🌱</h2>
-    <p>Preencha as informações para adicionar uma planta ao catálogo.</p>
+    <h2>Área administrativa 🌱</h2>
+    <div class="formulario" id="loginPainel">
+        <h3>Entrar como administrador</h3>
+        <p>Área exclusiva dos responsáveis pelo Herbário do Sertão.</p>
+        <form id="formLogin">
+            <label for="emailAdmin">E-mail administrativo</label>
+            <input id="emailAdmin" type="email" autocomplete="username" required placeholder="E-mail da conta do projeto">
+            <label for="senhaAdmin">Senha</label>
+            <input id="senhaAdmin" type="password" autocomplete="current-password" required>
+            <button class="botao" type="submit">Entrar</button>
+            <p id="mensagemLogin" role="status" aria-live="polite"></p>
+        </form>
+    </div>
+    <div id="adminConteudo" hidden>
+      <div class="painel">
+        <p id="statusAdmin">Sessão administrativa ativa.</p>
+        <button class="botao botao-sec" type="button" onclick="sairAdmin()">Sair da área administrativa</button>
+      </div>
+      <h2 id="tituloFormulario">Cadastrar nova espécie</h2>
+      <p>Preencha as informações para adicionar uma planta ao catálogo.</p>
 
     <form class="formulario" id="formPlanta">
 
@@ -447,25 +443,8 @@ footer p {font-size:13px}
         <label>Nome científico / Espécie</label>
         <input id="especie" required placeholder="Ex: Handroanthus albus">
 
-        <label for="categoria">Categoria no catálogo</label>
-        <select id="categoria" required>
-            <option value="nativa">Nativa do Brasil</option>
-            <option value="caatinga">Nativa da Caatinga</option>
-            <option value="medicinal">Planta medicinal</option>
-            <option value="exotica">Planta exótica</option>
-            <option value="outra">Outra / em classificação</option>
-        </select>
-
-        <label for="status">Situação da identificação</label>
-        <select id="status" required>
-            <option value="revisao">Em revisão / identificação pendente</option>
-            <option value="confirmada">Identificação conferida em fonte confiável</option>
-        </select>
-        <p class="nota-tecnica">Marque como confirmada somente depois de conferir o nome científico em uma fonte botânica confiável.</p>
-
         <label>Fotografia</label>
-        <input type="file" id="foto" aria-label="Fotografia da espécie" accept="image/*" required>
-        <p class="nota-tecnica">A imagem será redimensionada para economizar espaço no armazenamento do navegador.</p>
+        <input type="file" id="foto" accept="image/*">
         <img id="preview" alt="Prévia da planta">
 
         <h3 style="margin-top:25px">2. Classificação científica</h3>
@@ -507,13 +486,11 @@ footer p {font-size:13px}
         <textarea id="encontrar"
         placeholder="Habitat, bioma, regiões e local na escola..."></textarea>
 
-        <label>Usos medicinais tradicionais documentados</label>
-        <p class="nota-tecnica">Registre apenas usos descritos em fontes identificáveis. Não transforme esse campo em indicação de tratamento ou recomendação de consumo.</p>
+        <label>Usos medicinais tradicionais</label>
         <textarea id="medicinais"
         placeholder="Registre apenas usos documentados e suas fontes..."></textarea>
 
-        <label>Métodos de preparo descritos nas fontes</label>
-        <p class="nota-tecnica">O registro tem finalidade documental e educativa; não é uma instrução para preparo ou uso.</p>
+        <label>Métodos de preparo documentados</label>
         <textarea id="preparo"
         placeholder="Informações históricas ou científicas documentadas..."></textarea>
 
@@ -529,8 +506,8 @@ footer p {font-size:13px}
         <input id="local" placeholder="Ex: Jardim principal">
 
         <label>Fontes e referências científicas</label>
-        <textarea id="fontes" required
-        placeholder="Informe links, livros, artigos ou instituições consultadas. Não cadastre informações sem indicar a fonte..."></textarea>
+        <textarea id="fontes"
+        placeholder="Links, livros, artigos e instituições consultadas..."></textarea>
 
         <button class="botao" type="submit">
             + Salvar espécie no catálogo
@@ -542,24 +519,19 @@ footer p {font-size:13px}
         <h3>Gerenciamento do acervo</h3>
         <p>Exclua espécies cadastradas pelo administrador.</p>
         <div id="gerenciar"></div>
-        <p class="nota-tecnica">A área de cadastro não possui autenticação. Em uma publicação na internet, qualquer visitante poderá cadastrar ou excluir registros. Use-a apenas em ambiente controlado até existir um sistema de usuários.</p>
+    </div>
+
+    <div class="painel">
+        <h3>🏷️ QR Codes das espécies</h3>
+        <p>Gere e baixe os QR Codes individuais para imprimir etiquetas e identificar as plantas no ambiente escolar.</p>
+        <div id="listaQrsAdmin"></div>
     </div>
 
     <div class="painel">
         <h3>📁 Exportação do projeto</h3>
-        <p>
-            Gere um arquivo HTML com o catálogo e todas as
-            informações e fotografias cadastradas.
-        </p>
-        <div class="botoes">
-            <button class="botao" type="button" onclick="exportarSite()">
-                ⬇ Exportar site atualizado
-            </button>
-            <button class="botao botao-sec" type="button" onclick="exportarBackup()">
-                Exportar backup dos dados (.json)
-            </button>
-        </div>
+        <p>O catálogo é carregado diretamente do Supabase. Para fazer cópias de segurança, utilize a exportação de dados do painel Supabase. Uma cópia HTML isolada não manteria a sincronização com o banco.</p>
     </div>
+    </div><!-- /adminConteudo -->
 </section>
 
 <!-- DETALHES DA ESPÉCIE -->
@@ -579,492 +551,258 @@ footer p {font-size:13px}
 </footer>
 
 <script>
+// CONFIGURAÇÃO: preencher com os dados do projeto em Supabase > Project Settings > API.
+// Use somente a URL e a chave publishable/anon. NUNCA coloque service_role/secret aqui.
+const SUPABASE_URL = "https://sklpkecbopemynelzvfq.supabase.co/rest/v1/";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_VwMEwlMZXCnvbXRgPksESA_Fniur3Ke";
+const STORAGE_BUCKET = "plantas-fotos";
 
-// DADOS INICIAIS - usados também no site exportado.
-// O armazenamento é local ao navegador/dispositivo, não é um banco de dados online.
-const DADOS_INICIAIS = [];
-
+const CAMPOS_PLANTA = [
+  "nome","especie","reino","familia","genero","rapida","origem",
+  "descricao","reconhecer","encontrar","medicinais","preparo",
+  "cuidados","adicionais","local","fontes"
+];
+const { createClient } = supabase;
+const configurado = SUPABASE_URL.startsWith("https://") &&
+  !SUPABASE_URL.includes("COLE_AQUI") &&
+  SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.includes("COLE_AQUI");
+const banco = configurado ? createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
 let plantas = [];
-try {
-    const salvas = localStorage.getItem("flora_escolar");
-    const dados = salvas ? JSON.parse(salvas) : DADOS_INICIAIS;
-    plantas = Array.isArray(dados) ? dados : DADOS_INICIAIS;
-} catch(e) {
-    plantas = DADOS_INICIAIS;
-    console.warn("Não foi possível ler o acervo salvo:", e);
-}
-
-let fotoCadastro = "";
+let sessaoAdmin = null;
+let fotoCadastroArquivo = null;
 let fotoIdentificacao = "";
-
-function salvarDados() {
-    try {
-        localStorage.setItem("flora_escolar", JSON.stringify(plantas));
-        atualizar();
-        return true;
-    } catch(e) {
-        alert("Não foi possível salvar. O armazenamento do navegador pode estar cheio. Exporte um backup e reduza/remova algumas fotografias.");
-        return false;
-    }
-}
-
-// Normaliza acentos e caixa para tornar as buscas mais naturais.
-function normalizar(valor) {
-    return String(valor || "")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLocaleLowerCase("pt-BR")
-        .trim();
-}
-
-function campo(p, chave) {
-    return String((p && p[chave]) || "");
-}
-
-// Redimensiona fotografias antes de armazená-las em Base64.
-// Isso reduz bastante o consumo do localStorage, embora não substitua um servidor.
-function comprimirImagem(arquivo) {
-    return new Promise((resolve, reject) => {
-        if(!arquivo || !arquivo.type.startsWith("image/")) {
-            reject(new Error("Selecione um arquivo de imagem válido."));
-            return;
-        }
-        if(arquivo.size > 8 * 1024 * 1024) {
-            reject(new Error("A imagem original deve ter no máximo 8 MB."));
-            return;
-        }
-
-        const leitor = new FileReader();
-        leitor.onerror = () => reject(new Error("Não foi possível ler a imagem."));
-        leitor.onload = () => {
-            const imagem = new Image();
-            imagem.onerror = () => reject(new Error("A imagem não pôde ser aberta."));
-            imagem.onload = () => {
-                const limite = 1200;
-                const escala = Math.min(1, limite / Math.max(imagem.width, imagem.height));
-                const canvas = document.createElement("canvas");
-                canvas.width = Math.max(1, Math.round(imagem.width * escala));
-                canvas.height = Math.max(1, Math.round(imagem.height * escala));
-                const contexto = canvas.getContext("2d");
-                contexto.drawImage(imagem, 0, 0, canvas.width, canvas.height);
-                let resultado = canvas.toDataURL("image/jpeg", 0.78);
-                if(resultado.length > 1_500_000) {
-                    resultado = canvas.toDataURL("image/jpeg", 0.62);
-                }
-                if(resultado.length > 1_800_000) {
-                    reject(new Error("A imagem continua muito grande após a compressão. Escolha outra fotografia."));
-                    return;
-                }
-                resolve(resultado);
-            };
-            imagem.src = leitor.result;
-        };
-        leitor.readAsDataURL(arquivo);
-    });
-}
-
-function abrirTela(id,botao) {
-    document.querySelectorAll(".tela").forEach(t => {
-        t.classList.remove("ativa");
-    });
-
-    document.getElementById(id).classList.add("ativa");
-
-    document.querySelectorAll("nav button").forEach(b => {
-        b.classList.remove("active");
-        b.setAttribute("aria-pressed", "false");
-    });
-
-    if(botao) {
-        botao.classList.add("active");
-        botao.setAttribute("aria-pressed", "true");
-    }
-
-    window.scrollTo(0,0);
-}
+let editandoId = null;
 
 function elemento(tag, texto, classe) {
-    const el = document.createElement(tag);
-    el.textContent = texto || "";
-    if(classe) el.className = classe;
-    return el;
+  const el = document.createElement(tag);
+  el.textContent = texto ?? "";
+  if (classe) el.className = classe;
+  return el;
 }
-
+function normalizar(v) {
+  return String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+function abrirTela(id, botao) {
+  if (id === "admin" && !sessaoAdmin) {
+    // A área de login é pública, mas operações administrativas exigem sessão validada pelo Supabase.
+  }
+  document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+  document.getElementById(id).classList.add("ativa");
+  document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+  if (botao) botao.classList.add("active");
+  window.scrollTo(0, 0);
+  if (id === "admin") atualizarPainelAdmin();
+}
+function exigirConfiguracao() {
+  if (!banco) {
+    alert("O Supabase ainda não foi configurado. Preencha SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY no início do JavaScript e execute o SQL de configuração.");
+    return false;
+  }
+  return true;
+}
+function mensagemErro(erro, contexto) {
+  console.error(contexto, erro);
+  alert(contexto + ": " + (erro?.message || "ocorreu um erro inesperado."));
+}
+async function carregarPlantas() {
+  if (!exigirConfiguracao()) return;
+  const { data, error } = await banco.from("plantas").select("*").order("nome", { ascending: true });
+  if (error) { mensagemErro(error, "Não foi possível carregar o catálogo"); return; }
+  plantas = data || [];
+  atualizar();
+}
 function criarCard(p) {
-    const card = document.createElement("article");
-    card.className = "card";
-
-    const img = document.createElement("img");
-    img.src = p.foto || "";
-    img.alt = p.nome || "Fotografia da planta";
-    img.loading = "lazy";
-
-    const conteudo = document.createElement("div");
-    conteudo.className = "card-conteudo";
-
-    conteudo.appendChild(elemento("h3","🌿 "+campo(p,"nome")));
-    conteudo.appendChild(elemento("p",campo(p,"especie")));
-
-    conteudo.appendChild(elemento("p",
-        p.familia ? "Família: "+p.familia : "Família não informada"
-    ));
-    const tagCategoria = elemento("span",
-        ({medicinal:"Medicinal",exotica:"Exótica",nativa:"Nativa do Brasil",caatinga:"Nativa da Caatinga",outra:"Outra"})[p.categoria || "outra"] || "Outra",
-        "tag");
-    const tagStatus = elemento("span",
-        p.status === "confirmada" ? "Identificação conferida" : "Em revisão",
-        p.status === "confirmada" ? "tag" : "tag revisao");
-    conteudo.append(tagCategoria,tagStatus);
-
-    const botao = elemento("button","Ver ficha completa","botao");
-    botao.onclick = () => abrirFicha(p.id);
-
-    conteudo.appendChild(botao);
-    card.append(img,conteudo);
-
-    return card;
+  const card = document.createElement("article"); card.className = "card";
+  if (p.foto_url) { const img = document.createElement("img"); img.src = p.foto_url; img.alt = p.nome || "Fotografia da planta"; img.loading = "lazy"; card.appendChild(img); }
+  const conteudo = document.createElement("div"); conteudo.className = "card-conteudo";
+  conteudo.appendChild(elemento("h3", "🌿 " + p.nome));
+  conteudo.appendChild(elemento("p", p.especie));
+  conteudo.appendChild(elemento("p", p.familia ? "Família: " + p.familia : "Família não informada"));
+  const botao = elemento("button", "Ver ficha completa", "botao");
+  botao.type = "button"; botao.onclick = () => abrirFicha(p.id);
+  conteudo.appendChild(botao); card.appendChild(conteudo); return card;
 }
-
 function mostrarCatalogo() {
-    const termo = normalizar(document.getElementById("pesquisa").value);
-    const ordem = document.getElementById("ordem").value;
-    const categoria = document.getElementById("filtroCategoria").value;
-
-    let dados = plantas.filter(p => {
-        const correspondeTexto =
-            normalizar(p.nome).includes(termo) ||
-            normalizar(p.especie).includes(termo) ||
-            normalizar(p.familia).includes(termo) ||
-            normalizar(p.genero).includes(termo);
-        const correspondeCategoria = !categoria || (p.categoria || "outra") === categoria;
-        return correspondeTexto && correspondeCategoria;
-    });
-
-    dados.sort((a,b) =>
-        campo(a,"nome").localeCompare(campo(b,"nome"),"pt-BR")
-    );
-
-    if(ordem === "za") dados.reverse();
-
-    const lista = document.getElementById("listaCatalogo");
-    lista.innerHTML = "";
-
-    if(!dados.length) {
-        lista.appendChild(elemento("p","Nenhuma espécie encontrada.","vazio"));
-        return;
-    }
-
-    dados.forEach(p => lista.appendChild(criarCard(p)));
+  const termo = normalizar(document.getElementById("pesquisa").value);
+  const ordem = document.getElementById("ordem").value;
+  const dados = plantas.filter(p => [p.nome,p.especie,p.familia].some(v => normalizar(v).includes(termo)));
+  dados.sort((a,b) => (a.nome || "").localeCompare(b.nome || "", "pt-BR"));
+  if (ordem === "za") dados.reverse();
+  const lista = document.getElementById("listaCatalogo"); lista.replaceChildren();
+  if (!dados.length) { lista.appendChild(elemento("p", "Nenhuma espécie encontrada.", "vazio")); return; }
+  dados.forEach(p => lista.appendChild(criarCard(p)));
 }
-
 function abrirFicha(id) {
-    const p = plantas.find(x => x.id === id);
-    if(!p) return;
-
-    const ficha = document.getElementById("conteudoFicha");
-    ficha.innerHTML = "";
-
-    ficha.appendChild(elemento("h1",campo(p,"nome")));
-    ficha.appendChild(elemento("p",campo(p,"especie")));
-    ficha.appendChild(elemento("p",
-        p.status === "confirmada"
-            ? "Identificação conferida em fonte confiável."
-            : "Identificação em revisão: confirme os dados antes de utilizá-los.",
-        p.status === "confirmada" ? "tag" : "tag revisao"
-    ));
-    ficha.appendChild(elemento("p",
-        "Categoria: " + (({medicinal:"Medicinal",exotica:"Exótica",nativa:"Nativa do Brasil",caatinga:"Nativa da Caatinga",outra:"Outra"})[p.categoria || "outra"] || "Outra"),
-        "tag"
-    ));
-
-    const img = document.createElement("img");
-    img.src = p.foto || "";
-    img.alt = p.nome || "Fotografia da planta";
-    img.loading = "lazy";
-    img.className = "foto-ficha";
-    ficha.appendChild(img);
-
-    ficha.appendChild(elemento("h2","Classificação científica"));
-
-    const grade = document.createElement("div");
-    grade.className = "info-rapida";
-
-    [
-        ["Reino",p.reino],
-        ["Família",p.familia],
-        ["Gênero",p.genero],
-        ["Espécie",p.especie],
-        ["Categoria",({medicinal:"Medicinal",exotica:"Exótica",nativa:"Nativa do Brasil",caatinga:"Nativa da Caatinga",outra:"Outra"})[p.categoria || "outra"] || "Outra"]
-    ].forEach(([titulo,valor]) => {
-        const item = document.createElement("div");
-        item.className = "info-item";
-        item.appendChild(elemento("small",titulo));
-        item.appendChild(elemento("strong",valor || "Não informado"));
-        grade.appendChild(item);
-    });
-
-    ficha.appendChild(grade);
-
-    const secoes = [
-        ["Ficha rápida",p.rapida],
-        ["Origem",p.origem],
-        ["Descrição geral",p.descricao],
-        ["Como reconhecer",p.reconhecer],
-        ["Onde encontrar",p.encontrar],
-        ["Usos medicinais tradicionais",p.medicinais],
-        ["Métodos de preparo documentados",p.preparo],
-        ["Cuidados e toxicidade",p.cuidados],
-        ["Curiosidades e informações adicionais",p.adicionais],
-        ["Local na escola",p.local],
-        ["Fontes e referências",p.fontes]
-    ];
-
-    secoes.forEach(([titulo,valor]) => {
-        if(!valor) return;
-
-        ficha.appendChild(elemento("h2",titulo));
-        ficha.appendChild(elemento("p",valor));
-    });
-
-    const alerta = document.createElement("div");
-    alerta.className = "alerta";
-    alerta.textContent =
-        "Informação educativa: os registros medicinais não substituem orientação profissional. Não utilize ou prepare plantas para consumo sem identificação segura e avaliação de um profissional qualificado.";
-
-    ficha.appendChild(alerta);
-
-    abrirTela("detalhes");
+  const p = plantas.find(x => String(x.id) === String(id));
+  if (!p) { alert("Esta espécie não foi encontrada no catálogo."); return; }
+  const ficha = document.getElementById("conteudoFicha"); ficha.replaceChildren();
+  ficha.appendChild(elemento("h1", p.nome)); ficha.appendChild(elemento("p", p.especie));
+  if (p.foto_url) { const img = document.createElement("img"); img.src = p.foto_url; img.alt = p.nome; img.className = "foto-ficha"; ficha.appendChild(img); }
+  ficha.appendChild(elemento("h2", "Classificação científica"));
+  const grade = document.createElement("div"); grade.className = "info-rapida";
+  [["Reino",p.reino],["Família",p.familia],["Gênero",p.genero],["Espécie",p.especie]].forEach(([titulo,valor]) => {
+    const item = document.createElement("div"); item.className = "info-item";
+    item.appendChild(elemento("small", titulo)); item.appendChild(elemento("strong", valor || "Não informado")); grade.appendChild(item);
+  });
+  ficha.appendChild(grade);
+  [["Ficha rápida",p.rapida],["Origem",p.origem],["Descrição geral",p.descricao],["Como reconhecer",p.reconhecer],["Onde encontrar",p.encontrar],["Usos medicinais tradicionais",p.medicinais],["Métodos de preparo documentados",p.preparo],["Cuidados e toxicidade",p.cuidados],["Curiosidades e informações adicionais",p.adicionais],["Local na escola",p.local],["Fontes e referências",p.fontes]].forEach(([titulo,valor]) => {
+    if (!valor) return; ficha.appendChild(elemento("h2",titulo)); ficha.appendChild(elemento("p",valor));
+  });
+  const alerta = elemento("div", "Informação educativa: os registros medicinais não substituem orientação profissional. Não utilize ou prepare plantas para consumo sem identificação segura e avaliação de profissional qualificado.", "alerta"); ficha.appendChild(alerta);
+  const qrArea = document.createElement("div"); qrArea.className = "painel";
+  qrArea.appendChild(elemento("h3", "QR Code desta espécie"));
+  qrArea.appendChild(elemento("p", "Escaneie para abrir diretamente esta ficha no Herbário do Sertão."));
+  const qrBox = document.createElement("div"); qrBox.id = "qrFicha"; qrBox.style.margin = "16px 0"; qrArea.appendChild(qrBox);
+  const url = urlDaFicha(p.id); gerarQr(qrBox, url, 180);
+  const baixar = elemento("button", "Baixar QR Code (PNG)", "botao"); baixar.type="button"; baixar.onclick=()=>baixarQr(qrBox,"qr-"+slug(p.nome)+".png"); qrArea.appendChild(baixar);
+  const copiar = elemento("button", "Copiar link da ficha", "botao botao-sec"); copiar.type="button"; copiar.onclick=()=>copiarTexto(url); qrArea.appendChild(copiar);
+  ficha.appendChild(qrArea);
+  abrirTela("detalhes");
 }
-
 function buscaAvancada() {
-    const nome = normalizar(document.getElementById("fNome").value);
-    const reino = normalizar(document.getElementById("fReino").value);
-    const familia = normalizar(document.getElementById("fFamilia").value);
-    const origem = normalizar(document.getElementById("fOrigem").value);
-
-    // Os filtros de campos diferentes são combinados com E;
-    // nome popular e científico são combinados com OU.
-    const resultados = plantas.filter(p =>
-        (!nome ||
-            normalizar(p.nome).includes(nome) ||
-            normalizar(p.especie).includes(nome)) &&
-        (!reino || normalizar(p.reino).includes(reino)) &&
-        (!familia || normalizar(p.familia).includes(familia)) &&
-        (!origem || normalizar(p.origem).includes(origem))
-    );
-
-    const area = document.getElementById("resultadoAvancado");
-    area.innerHTML = "";
-
-    if(!resultados.length) {
-        area.appendChild(elemento("p","Nenhuma espécie encontrada. Confira os filtros e tente novamente.","vazio"));
-        return;
-    }
-
-    resultados.forEach(p => area.appendChild(criarCard(p)));
+  const nome=normalizar(document.getElementById("fNome").value), reino=normalizar(document.getElementById("fReino").value), familia=normalizar(document.getElementById("fFamilia").value), origem=normalizar(document.getElementById("fOrigem").value);
+  const resultados=plantas.filter(p => (!nome || normalizar(p.nome).includes(nome) || normalizar(p.especie).includes(nome)) && (!reino || normalizar(p.reino).includes(reino)) && (!familia || normalizar(p.familia).includes(familia)) && (!origem || normalizar(p.origem).includes(origem)));
+  const area=document.getElementById("resultadoAvancado"); area.replaceChildren();
+  if (!resultados.length) { area.appendChild(elemento("p","Nenhuma espécie encontrada.","vazio")); return; }
+  resultados.forEach(p=>area.appendChild(criarCard(p)));
+}
+function limparBusca() { ["fNome","fReino","fFamilia","fOrigem"].forEach(id=>document.getElementById(id).value=""); document.getElementById("resultadoAvancado").replaceChildren(); }
+function slug(s) { return normalizar(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "especie"; }
+function urlDaFicha(id) { return location.origin + location.pathname + "#planta=" + encodeURIComponent(id); }
+function gerarQr(alvo, url, tamanho=180) {
+  alvo.replaceChildren();
+  if (typeof QRCode === "undefined") { alvo.textContent="Não foi possível carregar a biblioteca de QR Code. Verifique sua conexão."; return; }
+  new QRCode(alvo,{text:url,width:tamanho,height:tamanho,correctLevel:QRCode.CorrectLevel.M});
+}
+function baixarQr(alvo,nome) {
+  const img=alvo.querySelector("img"), canvas=alvo.querySelector("canvas");
+  const src=img?.src || canvas?.toDataURL("image/png");
+  if (!src) { alert("QR Code ainda não foi gerado."); return; }
+  const a=document.createElement("a"); a.href=src; a.download=nome; a.click();
+}
+async function copiarTexto(texto) {
+  try { await navigator.clipboard.writeText(texto); alert("Link copiado!"); }
+  catch { prompt("Copie o link da ficha:",texto); }
+}
+function processarLinkDireto() {
+  const m=location.hash.match(/planta=([^&]+)/);
+  if (!m) return;
+  const id=decodeURIComponent(m[1]); const planta=plantas.find(p=>String(p.id)===id);
+  if (planta) abrirFicha(id); else alert("A ficha solicitada não foi encontrada.");
 }
 
-function limparBusca() {
-    ["fNome","fReino","fFamilia","fOrigem"].forEach(id => {
-        document.getElementById(id).value = "";
-    });
-    document.getElementById("resultadoAvancado").innerHTML = "";
+// Autenticação: a conta compartilhada é criada manualmente no painel Supabase.
+document.getElementById("formLogin").addEventListener("submit", async e => {
+  e.preventDefault(); if (!exigirConfiguracao()) return;
+  const email=document.getElementById("emailAdmin").value.trim(); const password=document.getElementById("senhaAdmin").value;
+  const msg=document.getElementById("mensagemLogin"); msg.textContent="Verificando acesso...";
+  const {data,error}=await banco.auth.signInWithPassword({email,password});
+  if (error) { msg.textContent="Não foi possível entrar. Confira as credenciais."; console.error(error); return; }
+  sessaoAdmin=data.session; atualizarPainelAdmin(); msg.textContent="Acesso autorizado.";
+  document.getElementById("formLogin").reset();
+});
+async function sairAdmin() { if (banco) await banco.auth.signOut(); sessaoAdmin=null; atualizarPainelAdmin(); alert("Sessão encerrada."); }
+function atualizarPainelAdmin() {
+  const logado=!!sessaoAdmin;
+  document.getElementById("loginPainel").hidden=logado;
+  document.getElementById("adminConteudo").hidden=!logado;
+  if (logado) { document.getElementById("statusAdmin").textContent="Sessão ativa: "+(sessaoAdmin.user.email || "administrador"); gerenciar(); gerarPainelQrs(); }
+}
+if (banco) {
+  banco.auth.getSession().then(({data})=>{sessaoAdmin=data.session; atualizarPainelAdmin();});
+  banco.auth.onAuthStateChange((_event,session)=>{sessaoAdmin=session; atualizarPainelAdmin();});
 }
 
-// PRÉVIA DA FOTO DO CADASTRO
-document.getElementById("foto").addEventListener("change", async function(e) {
-    const arquivo = e.target.files[0];
-    if(!arquivo) return;
-    try {
-        fotoCadastro = await comprimirImagem(arquivo);
-        const img = document.getElementById("preview");
-        img.src = fotoCadastro;
-        img.style.display = "block";
-    } catch(erro) {
-        fotoCadastro = "";
-        this.value = "";
-        alert(erro.message);
+// Prévia da fotografia. O arquivo é enviado ao Storage somente ao salvar o cadastro.
+document.getElementById("foto").addEventListener("change",function(e){
+  const arquivo=e.target.files[0]; if(!arquivo) return;
+  if(!arquivo.type.startsWith("image/") || arquivo.size>5*1024*1024){alert("Selecione uma imagem válida de até 5 MB.");this.value="";fotoCadastroArquivo=null;return;}
+  fotoCadastroArquivo=arquivo; const img=document.getElementById("preview"); img.src=URL.createObjectURL(arquivo); img.style.display="block";
+});
+async function enviarFoto(arquivo, id) {
+  const ext=(arquivo.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+  const caminho=id+"/"+Date.now()+"."+ext;
+  const {error}=await banco.storage.from(STORAGE_BUCKET).upload(caminho,arquivo,{upsert:true,contentType:arquivo.type});
+  if(error) throw error;
+  const {data}=banco.storage.from(STORAGE_BUCKET).getPublicUrl(caminho);
+  return {url:data.publicUrl,path:caminho};
+}
+function limparFormulario() {
+  document.getElementById("formPlanta").reset(); fotoCadastroArquivo=null;
+  document.getElementById("preview").style.display="none"; editandoId=null;
+  document.getElementById("tituloFormulario").textContent="Cadastrar nova espécie";
+  document.querySelector('#formPlanta button[type="submit"]').textContent="+ Salvar espécie no catálogo";
+  document.getElementById("cancelarEdicao")?.remove();
+}
+function cancelarEdicao() { limparFormulario(); }
+function iniciarEdicao(id) {
+  const p=plantas.find(x=>String(x.id)===String(id)); if(!p) return;
+  editandoId=p.id;
+  CAMPOS_PLANTA.forEach(c=>{const el=document.getElementById(c); if(el) el.value=p[c] || "";});
+  fotoCadastroArquivo=null;
+  if(p.foto_url){const img=document.getElementById("preview");img.src=p.foto_url;img.style.display="block";}
+  document.getElementById("tituloFormulario").textContent="Editar espécie: "+p.nome;
+  document.querySelector('#formPlanta button[type="submit"]').textContent="Salvar alterações";
+  if(!document.getElementById("cancelarEdicao")){const b=elemento("button","Cancelar edição","botao botao-sec");b.type="button";b.id="cancelarEdicao";b.onclick=cancelarEdicao;document.querySelector('#formPlanta button[type="submit"]').after(b);}
+  document.getElementById("admin").scrollIntoView({behavior:"smooth"});
+}
+document.getElementById("formPlanta").addEventListener("submit",async function(e){
+  e.preventDefault(); if(!sessaoAdmin || !exigirConfiguracao()) {alert("Entre como administrador antes de cadastrar.");return;}
+  const botao=this.querySelector('button[type="submit"]'); const estavaEditando=!!editandoId;
+  if (!estavaEditando && !fotoCadastroArquivo) { alert("Insira uma fotografia para a nova espécie."); return; }
+  botao.disabled=true; botao.textContent="Salvando...";
+  try {
+    const dados={}; CAMPOS_PLANTA.forEach(c=>dados[c]=document.getElementById(c).value.trim());
+    let id=editandoId;
+    if(!id) { const {data,error}=await banco.from("plantas").insert(dados).select("id").single(); if(error) throw error; id=data.id; }
+    else { const {error}=await banco.from("plantas").update(dados).eq("id",id); if(error) throw error; }
+    if(fotoCadastroArquivo) {
+      const foto=await enviarFoto(fotoCadastroArquivo,id);
+      const {error}=await banco.from("plantas").update({foto_url:foto.url,foto_path:foto.path}).eq("id",id); if(error) throw error;
     }
+    limparFormulario(); await carregarPlantas(); alert(estavaEditando?"Espécie atualizada!":"Espécie cadastrada com sucesso!"); abrirTela("catalogo");
+  } catch(err) { mensagemErro(err,"Não foi possível salvar a espécie"); }
+  finally {botao.disabled=false;botao.textContent=editandoId?"Salvar alterações":"+ Salvar espécie no catálogo";}
 });
 
-// CADASTRO
-document.getElementById("formPlanta").addEventListener("submit",function(e) {
-    e.preventDefault();
+// Identificação visual permanece como demonstração local: não é um cadastro botânico nem é enviada ao banco.
+function previewIdentificacao(e){const arquivo=e.target.files[0];if(!arquivo)return;if(!arquivo.type.startsWith("image/")||arquivo.size>5*1024*1024){alert("Escolha uma imagem válida de até 5 MB.");e.target.value="";return;}const leitor=new FileReader();leitor.onload=()=>{fotoIdentificacao=leitor.result;const img=document.getElementById("identPreview");img.src=fotoIdentificacao;img.style.display="block";};leitor.readAsDataURL(arquivo);}
+function registrarIdentificacao(){if(!fotoIdentificacao){alert("Insira uma fotografia primeiro.");return;}const area=document.getElementById("respostaIdent");area.replaceChildren();const img=document.createElement("img");img.src=fotoIdentificacao;img.style.maxWidth="180px";img.style.borderRadius="10px";area.appendChild(img);area.appendChild(elemento("h3","Fotografia registrada nesta sessão"));area.appendChild(elemento("p",document.getElementById("observacaoIdent").value||"Nenhuma característica informada."));area.appendChild(elemento("p","Consulte um especialista para confirmar a identificação. Este envio não é armazenado permanentemente."));fotoIdentificacao="";document.getElementById("fotoIdent").value="";document.getElementById("observacaoIdent").value="";document.getElementById("identPreview").style.display="none";}
 
-    if(!fotoCadastro) {
-        alert("Insira uma fotografia válida.");
-        return;
-    }
-
-    const campos = [
-        "nome","especie","categoria","status","reino","familia","genero",
-        "rapida","origem","descricao","reconhecer",
-        "encontrar","medicinais","preparo","cuidados",
-        "adicionais","local","fontes"
-    ];
-
-    const planta = {
-        id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()),
-        foto: fotoCadastro
-    };
-
-    campos.forEach(c => {
-        planta[c] = document.getElementById(c).value.trim();
-    });
-
-    plantas.push(planta);
-    if(!salvarDados()) {
-        plantas.pop();
-        return;
-    }
-
-    this.reset();
-    fotoCadastro = "";
-    document.getElementById("preview").removeAttribute("src");
-    document.getElementById("preview").style.display = "none";
-
-    alert("Espécie cadastrada com sucesso! 🌿");
-    abrirTela("catalogo");
-});
-
-// IDENTIFICAÇÃO VISUAL (registro de observação; não identifica automaticamente)
-async function previewIdentificacao(e) {
-    const arquivo = e.target.files[0];
-    if(!arquivo) return;
-    try {
-        fotoIdentificacao = await comprimirImagem(arquivo);
-        const img = document.getElementById("identPreview");
-        img.src = fotoIdentificacao;
-        img.style.display = "block";
-    } catch(erro) {
-        fotoIdentificacao = "";
-        e.target.value = "";
-        alert(erro.message);
-    }
+async function excluirPlanta(id) {
+  const p=plantas.find(x=>String(x.id)===String(id)); if(!p||!sessaoAdmin)return;
+  if(!confirm("Deseja excluir "+p.nome+"? Esta ação não pode ser desfeita."))return;
+  try {
+    const {error}=await banco.from("plantas").delete().eq("id",id); if(error)throw error;
+    if(p.foto_path){const {error:storageError}=await banco.storage.from(STORAGE_BUCKET).remove([p.foto_path]);if(storageError)console.warn("Registro excluído, mas não foi possível remover a imagem:",storageError);}
+    await carregarPlantas();
+  } catch(err){mensagemErro(err,"Não foi possível excluir a espécie");}
 }
-
-function registrarIdentificacao() {
-    if(!fotoIdentificacao) {
-        alert("Insira uma fotografia primeiro.");
-        return;
-    }
-
-    const registro = {
-        foto:fotoIdentificacao,
-        observacao:document.getElementById("observacaoIdent").value
-    };
-
-    const area = document.getElementById("respostaIdent");
-    area.innerHTML = "";
-
-    const img = document.createElement("img");
-    img.src = registro.foto;
-    img.style.maxWidth = "180px";
-    img.style.borderRadius = "10px";
-
-    area.appendChild(img);
-    area.appendChild(elemento("h3","Fotografia registrada!"));
-    area.appendChild(elemento("p",registro.observacao ||
-        "Nenhuma característica informada."));
-    area.appendChild(elemento("p",
-        "Consulte um especialista para confirmar a identificação."));
-
-    fotoIdentificacao = "";
-    document.getElementById("fotoIdent").value = "";
-    document.getElementById("observacaoIdent").value = "";
-    document.getElementById("identPreview").style.display = "none";
+function gerenciar(){
+  const area=document.getElementById("gerenciar");area.replaceChildren();
+  if(!plantas.length){area.appendChild(elemento("p","Nenhuma espécie cadastrada.","vazio"));return;}
+  plantas.forEach(p=>{const linha=document.createElement("div");linha.style.padding="12px 0";linha.style.borderBottom="1px solid #ddd";linha.appendChild(elemento("strong",p.nome+" "));
+    const editar=elemento("button","Editar","botao botao-sec");editar.type="button";editar.onclick=()=>iniciarEdicao(p.id);linha.appendChild(editar);
+    const excluir=elemento("button","Excluir","botao botao-perigo");excluir.type="button";excluir.onclick=()=>excluirPlanta(p.id);linha.appendChild(excluir);area.appendChild(linha);});
 }
-
-// GERENCIAMENTO
-function gerenciar() {
-    const area = document.getElementById("gerenciar");
-    area.innerHTML = "";
-
-    plantas.forEach(p => {
-        const linha = document.createElement("div");
-        linha.style.padding = "12px 0";
-        linha.style.borderBottom = "1px solid #ddd";
-
-        linha.appendChild(elemento("strong",p.nome+" "));
-
-        const excluir = elemento("button","Excluir","botao botao-perigo");
-        excluir.onclick = () => {
-            if(confirm("Deseja excluir "+p.nome+"?")) {
-                const anterior = plantas;
-                plantas = plantas.filter(x => x.id !== p.id);
-                if(!salvarDados()) plantas = anterior;
-            }
-        };
-
-        linha.appendChild(excluir);
-        area.appendChild(linha);
-    });
+function gerarPainelQrs(){
+  const area=document.getElementById("listaQrsAdmin"); if(!area)return; area.replaceChildren();
+  if(!plantas.length){area.appendChild(elemento("p","Cadastre uma espécie para gerar seu QR Code.","vazio"));return;}
+  plantas.forEach(p=>{const linha=document.createElement("div");linha.className="painel";linha.style.display="flex";linha.style.flexWrap="wrap";linha.style.alignItems="center";linha.style.gap="16px";
+    const info=document.createElement("div");info.style.flex="1";info.appendChild(elemento("strong",p.nome));info.appendChild(elemento("p",p.especie));
+    const qr=document.createElement("div");gerarQr(qr,urlDaFicha(p.id),128);const btn=elemento("button","Baixar PNG","botao");btn.type="button";btn.onclick=()=>baixarQr(qr,"qr-"+slug(p.nome)+".png");
+    linha.append(info,qr,btn);area.appendChild(linha);});
 }
+function atualizar(){mostrarCatalogo();gerenciar();document.getElementById("totalInicio").textContent=plantas.length+(plantas.length===1?" espécie cadastrada.":" espécies cadastradas.");gerarPainelQrs();}
 
-function atualizar() {
-    mostrarCatalogo();
-    gerenciar();
-
-    document.getElementById("totalInicio").textContent =
-        plantas.length + (plantas.length === 1 ?
-        " espécie cadastrada." : " espécies cadastradas.");
+// Inicialização e links de QR Code. O fragmento #planta=... funciona sem regras especiais no Pages.
+async function iniciar(){
+  if(!banco){document.getElementById("avisoConfiguracao").hidden=false;return;}
+  const {data}=await banco.auth.getSession();sessaoAdmin=data.session;atualizarPainelAdmin();
+  await carregarPlantas();processarLinkDireto();
+  window.addEventListener("hashchange",processarLinkDireto);
 }
-
-// BACKUP PORTÁVEL: permite guardar os registros separadamente do HTML.
-function exportarBackup() {
-    if(!plantas.length) {
-        alert("Não há espécies cadastradas para exportar.");
-        return;
-    }
-    const arquivo = new Blob(
-        [JSON.stringify({versao:1, exportadoEm:new Date().toISOString(), plantas}, null, 2)],
-        {type:"application/json;charset=utf-8"}
-    );
-    const url = URL.createObjectURL(arquivo);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "backup_herbario_do_sertao.json";
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-// EXPORTAR O SITE COM TODO O ACERVO
-function exportarSite() {
-    if(!plantas.length) {
-        alert("Cadastre pelo menos uma espécie.");
-        return;
-    }
-
-    let codigo = "<!DOCTYPE html>\n" +
-        document.documentElement.outerHTML;
-
-    const dados = JSON.stringify(plantas)
-        .replace(/</g,"\\u003c")
-        .replace(/>/g,"\\u003e")
-        .replace(/&/g,"\\u0026");
-
-    codigo = codigo.replace(
-        "const DADOS_INICIAIS = [];",
-        "const DADOS_INICIAIS = "+dados+";"
-    );
-
-    const arquivo = new Blob(
-        [codigo],
-        {type:"text/html;charset=utf-8"}
-    );
-
-    const url = URL.createObjectURL(arquivo);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = "flora_escolar_atualizada.html";
-    link.click();
-
-    setTimeout(() => URL.revokeObjectURL(url),1000);
-}
-
-atualizar();
-
+iniciar();
 </script>
 </body>
 </html>
