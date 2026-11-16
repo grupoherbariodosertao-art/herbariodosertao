@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -172,7 +171,26 @@ textarea {min-height:90px;resize:vertical}
     margin:18px 0;
     font-size:14px;
 }
+
 .vazio {padding:30px;text-align:center;color:var(--cinza)}
+.tag {
+    display:inline-block;
+    padding:5px 9px;
+    margin:5px 5px 0 0;
+    border-radius:20px;
+    background:var(--claro);
+    color:var(--verde);
+    font-size:12px;
+    font-weight:bold;
+}
+.tag.revisao {background:#fff0d8;color:#805817}
+.nota-tecnica {font-size:13px;color:var(--cinza);margin-top:8px}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible {
+    outline:3px solid #9acb9d;
+    outline-offset:2px;
+}
+button:disabled {opacity:.6;cursor:not-allowed}
+
 #preview,#identPreview {
     max-width:220px;
     max-height:180px;
@@ -201,17 +219,17 @@ footer p {font-size:13px}
 
 <header>
     <div class="topo">
-        <div class="logo">🌿 TESTE <span>TESTE</span></div>
-        <div>Enciclopédia Botânica da Escola</div>
+        <div class="logo">🌿 Herbário <span>do Sertão</span></div>
+        <div>Enciclopédia Botânica do CETI Helvídio Nunes</div>
     </div>
 
     <nav>
-        <button class="active" onclick="abrirTela('inicio',this)">Início</button>
-        <button onclick="abrirTela('catalogo',this)">Catálogo</button>
-        <button onclick="abrirTela('avancada',this)">Busca avançada</button>
-        <button onclick="abrirTela('identificar',this)">Identificar planta</button>
-        <button onclick="abrirTela('sobre',this)">Sobre o projeto</button>
-        <button onclick="abrirTela('admin',this)">Cadastrar planta</button>
+        <button type="button" class="active" aria-pressed="true" onclick="abrirTela('inicio',this)">Início</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('catalogo',this)">Catálogo</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('avancada',this)">Busca avançada</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('identificar',this)">Identificar planta</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('sobre',this)">Sobre o projeto</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('admin',this)">Cadastrar planta</button>
     </nav>
 </header>
 
@@ -273,6 +291,7 @@ footer p {font-size:13px}
     <div class="painel" style="margin-top:30px">
         <h2>🌿 Nosso acervo</h2>
         <p id="totalInicio">0 espécies cadastradas.</p>
+        <p class="nota-tecnica">Os registros são armazenados neste navegador. Para compartilhar o acervo entre computadores ou permitir edição simultânea, será necessário integrar o projeto a um banco de dados e a um servidor.</p>
     </div>
 </section>
 
@@ -282,10 +301,18 @@ footer p {font-size:13px}
     <p>Consulte as plantas cadastradas na enciclopédia.</p>
 
     <div class="grade" style="margin:20px 0">
-        <input id="pesquisa" placeholder="Pesquisar pelo nome..."
+        <input id="pesquisa" aria-label="Pesquisar no catálogo" placeholder="Pesquisar pelo nome..."
         oninput="mostrarCatalogo()">
 
-        <select id="ordem" onchange="mostrarCatalogo()">
+        <select id="filtroCategoria" aria-label="Filtrar por categoria" onchange="mostrarCatalogo()">
+            <option value="">Todas as categorias</option>
+            <option value="medicinal">Medicinais</option>
+            <option value="exotica">Exóticas</option>
+            <option value="nativa">Nativas do Brasil</option>
+            <option value="caatinga">Nativas da Caatinga</option>
+            <option value="outra">Outras</option>
+        </select>
+        <select id="ordem" aria-label="Ordenar catálogo" onchange="mostrarCatalogo()">
             <option value="az">Ordem alfabética: A - Z</option>
             <option value="za">Ordem alfabética: Z - A</option>
         </select>
@@ -335,7 +362,7 @@ footer p {font-size:13px}
         </p>
 
         <label>Fotografia da planta</label>
-        <input type="file" id="fotoIdent"
+        <input type="file" id="fotoIdent" aria-label="Fotografia para observação"
         accept="image/*" onchange="previewIdentificacao(event)">
 
         <img id="identPreview" alt="Prévia da fotografia">
@@ -397,10 +424,10 @@ footer p {font-size:13px}
             instituições e bases científicas, como:
         </p>
         <p>
-            <a href="https://www.gbif.org/" target="_blank">GBIF</a><br>
-            <a href="https://powo.science.kew.org/" target="_blank">Plants of the World Online</a><br>
-            <a href="https://floradobrasil.jbrj.gov.br/" target="_blank">Flora e Funga do Brasil</a><br>
-            <a href="https://www.in.gov.br/" target="_blank">Diário Oficial da União</a>
+            <a href="https://www.gbif.org/" target="_blank" rel="noopener noreferrer">GBIF</a><br>
+            <a href="https://powo.science.kew.org/" target="_blank" rel="noopener noreferrer">Plants of the World Online</a><br>
+            <a href="https://floradobrasil.jbrj.gov.br/" target="_blank" rel="noopener noreferrer">Flora e Funga do Brasil</a><br>
+            <a href="https://www.in.gov.br/" target="_blank" rel="noopener noreferrer">Diário Oficial da União</a>
         </p>
     </div>
 </section>
@@ -420,8 +447,25 @@ footer p {font-size:13px}
         <label>Nome científico / Espécie</label>
         <input id="especie" required placeholder="Ex: Handroanthus albus">
 
+        <label for="categoria">Categoria no catálogo</label>
+        <select id="categoria" required>
+            <option value="nativa">Nativa do Brasil</option>
+            <option value="caatinga">Nativa da Caatinga</option>
+            <option value="medicinal">Planta medicinal</option>
+            <option value="exotica">Planta exótica</option>
+            <option value="outra">Outra / em classificação</option>
+        </select>
+
+        <label for="status">Situação da identificação</label>
+        <select id="status" required>
+            <option value="revisao">Em revisão / identificação pendente</option>
+            <option value="confirmada">Identificação conferida em fonte confiável</option>
+        </select>
+        <p class="nota-tecnica">Marque como confirmada somente depois de conferir o nome científico em uma fonte botânica confiável.</p>
+
         <label>Fotografia</label>
-        <input type="file" id="foto" accept="image/*" required>
+        <input type="file" id="foto" aria-label="Fotografia da espécie" accept="image/*" required>
+        <p class="nota-tecnica">A imagem será redimensionada para economizar espaço no armazenamento do navegador.</p>
         <img id="preview" alt="Prévia da planta">
 
         <h3 style="margin-top:25px">2. Classificação científica</h3>
@@ -463,11 +507,13 @@ footer p {font-size:13px}
         <textarea id="encontrar"
         placeholder="Habitat, bioma, regiões e local na escola..."></textarea>
 
-        <label>Usos medicinais tradicionais</label>
+        <label>Usos medicinais tradicionais documentados</label>
+        <p class="nota-tecnica">Registre apenas usos descritos em fontes identificáveis. Não transforme esse campo em indicação de tratamento ou recomendação de consumo.</p>
         <textarea id="medicinais"
         placeholder="Registre apenas usos documentados e suas fontes..."></textarea>
 
-        <label>Métodos de preparo documentados</label>
+        <label>Métodos de preparo descritos nas fontes</label>
+        <p class="nota-tecnica">O registro tem finalidade documental e educativa; não é uma instrução para preparo ou uso.</p>
         <textarea id="preparo"
         placeholder="Informações históricas ou científicas documentadas..."></textarea>
 
@@ -483,8 +529,8 @@ footer p {font-size:13px}
         <input id="local" placeholder="Ex: Jardim principal">
 
         <label>Fontes e referências científicas</label>
-        <textarea id="fontes"
-        placeholder="Links, livros, artigos e instituições consultadas..."></textarea>
+        <textarea id="fontes" required
+        placeholder="Informe links, livros, artigos ou instituições consultadas. Não cadastre informações sem indicar a fonte..."></textarea>
 
         <button class="botao" type="submit">
             + Salvar espécie no catálogo
@@ -496,6 +542,7 @@ footer p {font-size:13px}
         <h3>Gerenciamento do acervo</h3>
         <p>Exclua espécies cadastradas pelo administrador.</p>
         <div id="gerenciar"></div>
+        <p class="nota-tecnica">A área de cadastro não possui autenticação. Em uma publicação na internet, qualquer visitante poderá cadastrar ou excluir registros. Use-a apenas em ambiente controlado até existir um sistema de usuários.</p>
     </div>
 
     <div class="painel">
@@ -504,9 +551,14 @@ footer p {font-size:13px}
             Gere um arquivo HTML com o catálogo e todas as
             informações e fotografias cadastradas.
         </p>
-        <button class="botao" onclick="exportarSite()">
-            ⬇ Exportar site atualizado
-        </button>
+        <div class="botoes">
+            <button class="botao" type="button" onclick="exportarSite()">
+                ⬇ Exportar site atualizado
+            </button>
+            <button class="botao botao-sec" type="button" onclick="exportarBackup()">
+                Exportar backup dos dados (.json)
+            </button>
+        </div>
     </div>
 </section>
 
@@ -521,23 +573,25 @@ footer p {font-size:13px}
 </main>
 
 <footer>
-    <h3 style="color:white">🌿TESTE</h3>
+    <h3 style="color:white">🌿Herbário do Sertão</h3>
     <p>Conhecimento, biodiversidade e preservação ambiental.</p>
     <p>Projeto educativo de catalogação botânica.</p>
 </footer>
 
 <script>
 
-// DADOS INICIAIS - usados também no site exportado
+// DADOS INICIAIS - usados também no site exportado.
+// O armazenamento é local ao navegador/dispositivo, não é um banco de dados online.
 const DADOS_INICIAIS = [];
 
 let plantas = [];
-
 try {
     const salvas = localStorage.getItem("flora_escolar");
-    plantas = salvas ? JSON.parse(salvas) : DADOS_INICIAIS;
+    const dados = salvas ? JSON.parse(salvas) : DADOS_INICIAIS;
+    plantas = Array.isArray(dados) ? dados : DADOS_INICIAIS;
 } catch(e) {
     plantas = DADOS_INICIAIS;
+    console.warn("Não foi possível ler o acervo salvo:", e);
 }
 
 let fotoCadastro = "";
@@ -545,11 +599,68 @@ let fotoIdentificacao = "";
 
 function salvarDados() {
     try {
-        localStorage.setItem("flora_escolar",JSON.stringify(plantas));
+        localStorage.setItem("flora_escolar", JSON.stringify(plantas));
+        atualizar();
+        return true;
     } catch(e) {
-        alert("Armazenamento cheio. Utilize fotos menores.");
+        alert("Não foi possível salvar. O armazenamento do navegador pode estar cheio. Exporte um backup e reduza/remova algumas fotografias.");
+        return false;
     }
-    atualizar();
+}
+
+// Normaliza acentos e caixa para tornar as buscas mais naturais.
+function normalizar(valor) {
+    return String(valor || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("pt-BR")
+        .trim();
+}
+
+function campo(p, chave) {
+    return String((p && p[chave]) || "");
+}
+
+// Redimensiona fotografias antes de armazená-las em Base64.
+// Isso reduz bastante o consumo do localStorage, embora não substitua um servidor.
+function comprimirImagem(arquivo) {
+    return new Promise((resolve, reject) => {
+        if(!arquivo || !arquivo.type.startsWith("image/")) {
+            reject(new Error("Selecione um arquivo de imagem válido."));
+            return;
+        }
+        if(arquivo.size > 8 * 1024 * 1024) {
+            reject(new Error("A imagem original deve ter no máximo 8 MB."));
+            return;
+        }
+
+        const leitor = new FileReader();
+        leitor.onerror = () => reject(new Error("Não foi possível ler a imagem."));
+        leitor.onload = () => {
+            const imagem = new Image();
+            imagem.onerror = () => reject(new Error("A imagem não pôde ser aberta."));
+            imagem.onload = () => {
+                const limite = 1200;
+                const escala = Math.min(1, limite / Math.max(imagem.width, imagem.height));
+                const canvas = document.createElement("canvas");
+                canvas.width = Math.max(1, Math.round(imagem.width * escala));
+                canvas.height = Math.max(1, Math.round(imagem.height * escala));
+                const contexto = canvas.getContext("2d");
+                contexto.drawImage(imagem, 0, 0, canvas.width, canvas.height);
+                let resultado = canvas.toDataURL("image/jpeg", 0.78);
+                if(resultado.length > 1_500_000) {
+                    resultado = canvas.toDataURL("image/jpeg", 0.62);
+                }
+                if(resultado.length > 1_800_000) {
+                    reject(new Error("A imagem continua muito grande após a compressão. Escolha outra fotografia."));
+                    return;
+                }
+                resolve(resultado);
+            };
+            imagem.src = leitor.result;
+        };
+        leitor.readAsDataURL(arquivo);
+    });
 }
 
 function abrirTela(id,botao) {
@@ -561,9 +672,13 @@ function abrirTela(id,botao) {
 
     document.querySelectorAll("nav button").forEach(b => {
         b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
     });
 
-    if(botao) botao.classList.add("active");
+    if(botao) {
+        botao.classList.add("active");
+        botao.setAttribute("aria-pressed", "true");
+    }
 
     window.scrollTo(0,0);
 }
@@ -580,18 +695,26 @@ function criarCard(p) {
     card.className = "card";
 
     const img = document.createElement("img");
-    img.src = p.foto;
-    img.alt = p.nome;
+    img.src = p.foto || "";
+    img.alt = p.nome || "Fotografia da planta";
+    img.loading = "lazy";
 
     const conteudo = document.createElement("div");
     conteudo.className = "card-conteudo";
 
-    conteudo.appendChild(elemento("h3","🌿 "+p.nome));
-    conteudo.appendChild(elemento("p",p.especie));
+    conteudo.appendChild(elemento("h3","🌿 "+campo(p,"nome")));
+    conteudo.appendChild(elemento("p",campo(p,"especie")));
 
     conteudo.appendChild(elemento("p",
         p.familia ? "Família: "+p.familia : "Família não informada"
     ));
+    const tagCategoria = elemento("span",
+        ({medicinal:"Medicinal",exotica:"Exótica",nativa:"Nativa do Brasil",caatinga:"Nativa da Caatinga",outra:"Outra"})[p.categoria || "outra"] || "Outra",
+        "tag");
+    const tagStatus = elemento("span",
+        p.status === "confirmada" ? "Identificação conferida" : "Em revisão",
+        p.status === "confirmada" ? "tag" : "tag revisao");
+    conteudo.append(tagCategoria,tagStatus);
 
     const botao = elemento("button","Ver ficha completa","botao");
     botao.onclick = () => abrirFicha(p.id);
@@ -603,17 +726,22 @@ function criarCard(p) {
 }
 
 function mostrarCatalogo() {
-    const termo = document.getElementById("pesquisa").value.toLowerCase();
+    const termo = normalizar(document.getElementById("pesquisa").value);
     const ordem = document.getElementById("ordem").value;
+    const categoria = document.getElementById("filtroCategoria").value;
 
-    let dados = plantas.filter(p =>
-        p.nome.toLowerCase().includes(termo) ||
-        p.especie.toLowerCase().includes(termo) ||
-        p.familia.toLowerCase().includes(termo)
-    );
+    let dados = plantas.filter(p => {
+        const correspondeTexto =
+            normalizar(p.nome).includes(termo) ||
+            normalizar(p.especie).includes(termo) ||
+            normalizar(p.familia).includes(termo) ||
+            normalizar(p.genero).includes(termo);
+        const correspondeCategoria = !categoria || (p.categoria || "outra") === categoria;
+        return correspondeTexto && correspondeCategoria;
+    });
 
     dados.sort((a,b) =>
-        a.nome.localeCompare(b.nome,"pt-BR")
+        campo(a,"nome").localeCompare(campo(b,"nome"),"pt-BR")
     );
 
     if(ordem === "za") dados.reverse();
@@ -636,12 +764,23 @@ function abrirFicha(id) {
     const ficha = document.getElementById("conteudoFicha");
     ficha.innerHTML = "";
 
-    ficha.appendChild(elemento("h1",p.nome));
-    ficha.appendChild(elemento("p",p.especie));
+    ficha.appendChild(elemento("h1",campo(p,"nome")));
+    ficha.appendChild(elemento("p",campo(p,"especie")));
+    ficha.appendChild(elemento("p",
+        p.status === "confirmada"
+            ? "Identificação conferida em fonte confiável."
+            : "Identificação em revisão: confirme os dados antes de utilizá-los.",
+        p.status === "confirmada" ? "tag" : "tag revisao"
+    ));
+    ficha.appendChild(elemento("p",
+        "Categoria: " + (({medicinal:"Medicinal",exotica:"Exótica",nativa:"Nativa do Brasil",caatinga:"Nativa da Caatinga",outra:"Outra"})[p.categoria || "outra"] || "Outra"),
+        "tag"
+    ));
 
     const img = document.createElement("img");
-    img.src = p.foto;
-    img.alt = p.nome;
+    img.src = p.foto || "";
+    img.alt = p.nome || "Fotografia da planta";
+    img.loading = "lazy";
     img.className = "foto-ficha";
     ficha.appendChild(img);
 
@@ -654,7 +793,8 @@ function abrirFicha(id) {
         ["Reino",p.reino],
         ["Família",p.familia],
         ["Gênero",p.genero],
-        ["Espécie",p.especie]
+        ["Espécie",p.especie],
+        ["Categoria",({medicinal:"Medicinal",exotica:"Exótica",nativa:"Nativa do Brasil",caatinga:"Nativa da Caatinga",outra:"Outra"})[p.categoria || "outra"] || "Outra"]
     ].forEach(([titulo,valor]) => {
         const item = document.createElement("div");
         item.className = "info-item";
@@ -697,34 +837,27 @@ function abrirFicha(id) {
 }
 
 function buscaAvancada() {
-    const nome = document.getElementById("fNome").value.toLowerCase();
-    const reino = document.getElementById("fReino").value.toLowerCase();
-    const familia = document.getElementById("fFamilia").value.toLowerCase();
-    const origem = document.getElementById("fOrigem").value.toLowerCase();
+    const nome = normalizar(document.getElementById("fNome").value);
+    const reino = normalizar(document.getElementById("fReino").value);
+    const familia = normalizar(document.getElementById("fFamilia").value);
+    const origem = normalizar(document.getElementById("fOrigem").value);
 
-    const encontrados = plantas.filter(p =>
-        p.nome.toLowerCase().includes(nome) &&
-        p.especie.toLowerCase().includes(nome) &&
-        p.reino.toLowerCase().includes(reino) &&
-        p.familia.toLowerCase().includes(familia) &&
-        p.origem.toLowerCase().includes(origem)
+    // Os filtros de campos diferentes são combinados com E;
+    // nome popular e científico são combinados com OU.
+    const resultados = plantas.filter(p =>
+        (!nome ||
+            normalizar(p.nome).includes(nome) ||
+            normalizar(p.especie).includes(nome)) &&
+        (!reino || normalizar(p.reino).includes(reino)) &&
+        (!familia || normalizar(p.familia).includes(familia)) &&
+        (!origem || normalizar(p.origem).includes(origem))
     );
-
-    // Pesquisa pelo nome popular OU científico
-    const resultados = encontrados.length ? encontrados :
-        plantas.filter(p =>
-            (p.nome.toLowerCase().includes(nome) ||
-             p.especie.toLowerCase().includes(nome)) &&
-            p.reino.toLowerCase().includes(reino) &&
-            p.familia.toLowerCase().includes(familia) &&
-            p.origem.toLowerCase().includes(origem)
-        );
 
     const area = document.getElementById("resultadoAvancado");
     area.innerHTML = "";
 
     if(!resultados.length) {
-        area.appendChild(elemento("p","Nenhuma espécie encontrada.","vazio"));
+        area.appendChild(elemento("p","Nenhuma espécie encontrada. Confira os filtros e tente novamente.","vazio"));
         return;
     }
 
@@ -739,29 +872,19 @@ function limparBusca() {
 }
 
 // PRÉVIA DA FOTO DO CADASTRO
-document.getElementById("foto").addEventListener("change",function(e) {
+document.getElementById("foto").addEventListener("change", async function(e) {
     const arquivo = e.target.files[0];
     if(!arquivo) return;
-
-    if(!arquivo.type.startsWith("image/")) {
-        alert("Selecione uma imagem válida.");
-        return;
-    }
-
-    if(arquivo.size > 2*1024*1024) {
-        alert("A imagem deve ter no máximo 2 MB.");
-        this.value = "";
-        return;
-    }
-
-    const leitor = new FileReader();
-    leitor.onload = () => {
-        fotoCadastro = leitor.result;
+    try {
+        fotoCadastro = await comprimirImagem(arquivo);
         const img = document.getElementById("preview");
         img.src = fotoCadastro;
         img.style.display = "block";
-    };
-    leitor.readAsDataURL(arquivo);
+    } catch(erro) {
+        fotoCadastro = "";
+        this.value = "";
+        alert(erro.message);
+    }
 });
 
 // CADASTRO
@@ -769,57 +892,55 @@ document.getElementById("formPlanta").addEventListener("submit",function(e) {
     e.preventDefault();
 
     if(!fotoCadastro) {
-        alert("Insira uma fotografia.");
+        alert("Insira uma fotografia válida.");
         return;
     }
 
     const campos = [
-        "nome","especie","reino","familia","genero",
+        "nome","especie","categoria","status","reino","familia","genero",
         "rapida","origem","descricao","reconhecer",
         "encontrar","medicinais","preparo","cuidados",
         "adicionais","local","fontes"
     ];
 
-    const planta = {id:Date.now(),foto:fotoCadastro};
+    const planta = {
+        id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()),
+        foto: fotoCadastro
+    };
 
     campos.forEach(c => {
         planta[c] = document.getElementById(c).value.trim();
     });
 
     plantas.push(planta);
+    if(!salvarDados()) {
+        plantas.pop();
+        return;
+    }
 
-    salvarDados();
     this.reset();
-
     fotoCadastro = "";
+    document.getElementById("preview").removeAttribute("src");
     document.getElementById("preview").style.display = "none";
 
     alert("Espécie cadastrada com sucesso! 🌿");
     abrirTela("catalogo");
 });
 
-// IDENTIFICAÇÃO VISUAL
-function previewIdentificacao(e) {
+// IDENTIFICAÇÃO VISUAL (registro de observação; não identifica automaticamente)
+async function previewIdentificacao(e) {
     const arquivo = e.target.files[0];
     if(!arquivo) return;
-
-    if(!arquivo.type.startsWith("image/") ||
-       arquivo.size > 2*1024*1024) {
-        alert("Escolha uma imagem válida de até 2 MB.");
-        e.target.value = "";
-        return;
-    }
-
-    const leitor = new FileReader();
-
-    leitor.onload = () => {
-        fotoIdentificacao = leitor.result;
+    try {
+        fotoIdentificacao = await comprimirImagem(arquivo);
         const img = document.getElementById("identPreview");
         img.src = fotoIdentificacao;
         img.style.display = "block";
-    };
-
-    leitor.readAsDataURL(arquivo);
+    } catch(erro) {
+        fotoIdentificacao = "";
+        e.target.value = "";
+        alert(erro.message);
+    }
 }
 
 function registrarIdentificacao() {
@@ -869,8 +990,9 @@ function gerenciar() {
         const excluir = elemento("button","Excluir","botao botao-perigo");
         excluir.onclick = () => {
             if(confirm("Deseja excluir "+p.nome+"?")) {
+                const anterior = plantas;
                 plantas = plantas.filter(x => x.id !== p.id);
-                salvarDados();
+                if(!salvarDados()) plantas = anterior;
             }
         };
 
@@ -886,6 +1008,24 @@ function atualizar() {
     document.getElementById("totalInicio").textContent =
         plantas.length + (plantas.length === 1 ?
         " espécie cadastrada." : " espécies cadastradas.");
+}
+
+// BACKUP PORTÁVEL: permite guardar os registros separadamente do HTML.
+function exportarBackup() {
+    if(!plantas.length) {
+        alert("Não há espécies cadastradas para exportar.");
+        return;
+    }
+    const arquivo = new Blob(
+        [JSON.stringify({versao:1, exportadoEm:new Date().toISOString(), plantas}, null, 2)],
+        {type:"application/json;charset=utf-8"}
+    );
+    const url = URL.createObjectURL(arquivo);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "backup_herbario_do_sertao.json";
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 // EXPORTAR O SITE COM TODO O ACERVO
