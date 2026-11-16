@@ -1,0 +1,1071 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flora Escolar | Enciclopédia Botânica</title>
+
+<style>
+:root {
+    --verde:#245c3a;
+    --verde2:#387b4c;
+    --claro:#edf5ec;
+    --creme:#faf9f3;
+    --texto:#263c2d;
+    --cinza:#718075;
+}
+* {box-sizing:border-box;margin:0;padding:0}
+body {
+    font-family:Arial,sans-serif;
+    background:var(--creme);
+    color:var(--texto);
+}
+header {
+    background:linear-gradient(120deg,#17452c,#46865a);
+    color:white;
+    padding:27px 6%;
+}
+.topo {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+}
+.logo {font-size:25px;font-weight:bold}
+.logo span {color:#c4e7bb}
+nav {
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:23px;
+}
+nav button {
+    border:1px solid #ffffff55;
+    color:white;
+    background:transparent;
+    padding:11px 15px;
+    border-radius:8px;
+    cursor:pointer;
+}
+nav button.active,nav button:hover {
+    background:white;
+    color:var(--verde);
+}
+main {min-height:70vh}
+.tela {
+    display:none;
+    max-width:1150px;
+    margin:auto;
+    padding:35px 20px;
+}
+.tela.ativa {display:block}
+.hero {
+    background:linear-gradient(120deg,#e1efdf,#f5f5e8);
+    border-radius:18px;
+    padding:55px 30px;
+    margin-bottom:30px;
+}
+.hero h1 {font-size:36px;color:var(--verde);margin-bottom:15px}
+.hero p {max-width:650px;line-height:1.7;color:#526b56}
+h2 {color:var(--verde);margin-bottom:18px}
+h3 {color:var(--verde);margin-bottom:10px}
+p {line-height:1.6}
+.botao {
+    background:var(--verde);
+    color:white;
+    border:0;
+    padding:12px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:12px;
+    font-weight:bold;
+}
+.botao:hover {background:var(--verde2)}
+.botao-sec {
+    background:#e5efe4;
+    color:var(--verde);
+}
+.botao-perigo {background:#b33e3e}
+.botoes {display:flex;gap:10px;flex-wrap:wrap}
+.cards {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:20px;
+    margin-top:20px;
+}
+.card {
+    background:white;
+    border-radius:13px;
+    overflow:hidden;
+    box-shadow:0 3px 12px #00000012;
+    border:1px solid #e8eee6;
+}
+.card img {
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+.card-conteudo {padding:17px}
+.card p {font-size:14px;color:#647268}
+.card button {margin-right:5px}
+.formulario,.painel,.ficha {
+    background:white;
+    padding:25px;
+    border-radius:14px;
+    box-shadow:0 3px 12px #0000000d;
+    margin-bottom:25px;
+}
+label {
+    display:block;
+    font-weight:bold;
+    margin:15px 0 7px;
+    color:var(--verde);
+}
+input,select,textarea {
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd9cb;
+    border-radius:8px;
+    font-size:15px;
+    background:white;
+}
+textarea {min-height:90px;resize:vertical}
+.grade {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+.resultados {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:20px;
+}
+.foto-ficha {
+    width:100%;
+    max-height:380px;
+    object-fit:cover;
+    border-radius:12px;
+    margin:15px 0;
+}
+.ficha h2 {margin-top:28px}
+.ficha p {white-space:pre-wrap}
+.info-rapida {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px;
+    margin:20px 0;
+}
+.info-item {
+    background:var(--claro);
+    padding:15px;
+    border-radius:9px;
+}
+.info-item small {color:var(--cinza)}
+.info-item strong {display:block;margin-top:6px}
+.alerta {
+    background:#fff4df;
+    border-left:4px solid #c38a25;
+    padding:15px;
+    border-radius:7px;
+    margin:18px 0;
+    font-size:14px;
+}
+
+.vazio {padding:30px;text-align:center;color:var(--cinza)}
+.tag {
+    display:inline-block;
+    padding:5px 9px;
+    margin:5px 5px 0 0;
+    border-radius:20px;
+    background:var(--claro);
+    color:var(--verde);
+    font-size:12px;
+    font-weight:bold;
+}
+.tag.revisao {background:#fff0d8;color:#805817}
+.nota-tecnica {font-size:13px;color:var(--cinza);margin-top:8px}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible {
+    outline:3px solid #9acb9d;
+    outline-offset:2px;
+}
+button:disabled {opacity:.6;cursor:not-allowed}
+
+#preview,#identPreview {
+    max-width:220px;
+    max-height:180px;
+    display:none;
+    object-fit:cover;
+    margin-top:12px;
+    border-radius:10px;
+}
+footer {
+    background:#173e29;
+    color:white;
+    text-align:center;
+    padding:25px;
+    margin-top:30px;
+}
+footer p {font-size:13px}
+@media(max-width:600px) {
+    .hero h1 {font-size:28px}
+    nav button {font-size:12px;padding:9px}
+    header {padding:22px 15px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="topo">
+        <div class="logo">🌿 Herbário <span>do Sertão</span></div>
+        <div>Enciclopédia Botânica do CETI Helvídio Nunes</div>
+    </div>
+
+    <nav>
+        <button type="button" class="active" aria-pressed="true" onclick="abrirTela('inicio',this)">Início</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('catalogo',this)">Catálogo</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('avancada',this)">Busca avançada</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('identificar',this)">Identificar planta</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('sobre',this)">Sobre o projeto</button>
+        <button type="button" aria-pressed="false" onclick="abrirTela('admin',this)">Cadastrar planta</button>
+    </nav>
+</header>
+
+<main>
+
+<!-- INÍCIO -->
+<section class="tela ativa" id="inicio">
+
+    <div class="hero">
+        <h1>Descubra a riqueza da nossa flora! 🌱</h1>
+        <p>
+            Explore as espécies vegetais presentes em nosso ambiente,
+            conheça suas características, classificação científica,
+            origem e importância para a biodiversidade.
+        </p>
+
+        <div class="botoes">
+            <button class="botao" onclick="abrirTela('catalogo')">
+                Explorar catálogo
+            </button>
+            <button class="botao botao-sec"
+            onclick="abrirTela('identificar')">
+                Identificar uma planta
+            </button>
+        </div>
+    </div>
+
+    <h2>Explore nossa plataforma</h2>
+
+    <div class="cards">
+        <div class="card">
+            <div class="card-conteudo">
+                <h3>🌳 Catálogo botânico</h3>
+                <p>Consulte espécies organizadas em ordem alfabética.</p>
+                <button class="botao"
+                onclick="abrirTela('catalogo')">Acessar</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-conteudo">
+                <h3>🔎 Busca avançada</h3>
+                <p>Encontre espécies por reino, família e nome científico.</p>
+                <button class="botao"
+                onclick="abrirTela('avancada')">Pesquisar</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-conteudo">
+                <h3>📷 Identificação</h3>
+                <p>Envie uma fotografia para consultar e registrar uma planta.</p>
+                <button class="botao"
+                onclick="abrirTela('identificar')">Começar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="painel" style="margin-top:30px">
+        <h2>🌿 Nosso acervo</h2>
+        <p id="totalInicio">0 espécies cadastradas.</p>
+        <p class="nota-tecnica">Os registros são armazenados neste navegador. Para compartilhar o acervo entre computadores ou permitir edição simultânea, será necessário integrar o projeto a um banco de dados e a um servidor.</p>
+    </div>
+</section>
+
+<!-- CATÁLOGO -->
+<section class="tela" id="catalogo">
+    <h2>Catálogo de espécies</h2>
+    <p>Consulte as plantas cadastradas na enciclopédia.</p>
+
+    <div class="grade" style="margin:20px 0">
+        <input id="pesquisa" aria-label="Pesquisar no catálogo" placeholder="Pesquisar pelo nome..."
+        oninput="mostrarCatalogo()">
+
+        <select id="filtroCategoria" aria-label="Filtrar por categoria" onchange="mostrarCatalogo()">
+            <option value="">Todas as categorias</option>
+            <option value="medicinal">Medicinais</option>
+            <option value="exotica">Exóticas</option>
+            <option value="nativa">Nativas do Brasil</option>
+            <option value="caatinga">Nativas da Caatinga</option>
+            <option value="outra">Outras</option>
+        </select>
+        <select id="ordem" aria-label="Ordenar catálogo" onchange="mostrarCatalogo()">
+            <option value="az">Ordem alfabética: A - Z</option>
+            <option value="za">Ordem alfabética: Z - A</option>
+        </select>
+    </div>
+
+    <div class="resultados" id="listaCatalogo"></div>
+</section>
+
+<!-- BUSCA AVANÇADA -->
+<section class="tela" id="avancada">
+    <h2>Busca avançada 🔎</h2>
+    <p>Utilize os critérios abaixo para encontrar uma espécie.</p>
+
+    <div class="formulario">
+        <label>Nome popular ou científico</label>
+        <input id="fNome" placeholder="Digite o nome...">
+
+        <label>Reino</label>
+        <input id="fReino" placeholder="Ex: Plantae">
+
+        <label>Família botânica</label>
+        <input id="fFamilia" placeholder="Ex: Arecaceae">
+
+        <label>Origem</label>
+        <input id="fOrigem" placeholder="Ex: Brasil">
+
+        <div class="botoes">
+            <button class="botao" onclick="buscaAvancada()">
+                Buscar espécies
+            </button>
+            <button class="botao botao-sec"
+            onclick="limparBusca()">Limpar filtros</button>
+        </div>
+    </div>
+
+    <div class="resultados" id="resultadoAvancado"></div>
+</section>
+
+<!-- IDENTIFICAÇÃO -->
+<section class="tela" id="identificar">
+    <h2>Identificar uma planta 📷</h2>
+
+    <div class="formulario">
+        <p>
+            Envie uma fotografia e registre as características observadas
+            para auxiliar na identificação botânica.
+        </p>
+
+        <label>Fotografia da planta</label>
+        <input type="file" id="fotoIdent" aria-label="Fotografia para observação"
+        accept="image/*" onchange="previewIdentificacao(event)">
+
+        <img id="identPreview" alt="Prévia da fotografia">
+
+        <label>Características observadas</label>
+        <textarea id="observacaoIdent"
+        placeholder="Ex: folhas grandes, flores amarelas, caule fino..."></textarea>
+
+        <button class="botao" onclick="registrarIdentificacao()">
+            Registrar observação
+        </button>
+
+        <div id="respostaIdent" style="margin-top:20px"></div>
+    </div>
+
+    <div class="alerta">
+        <strong>Importante:</strong> esta ferramenta não realiza
+        reconhecimento automático de espécies. A fotografia e as
+        observações podem ajudar em uma consulta com um professor,
+        botânico ou especialista. Não consuma plantas desconhecidas.
+    </div>
+</section>
+
+<!-- SOBRE -->
+<section class="tela" id="sobre">
+    <div class="hero">
+        <h1>Sobre o projeto 🌎</h1>
+        <p>
+            A Flora Escolar é uma plataforma educativa desenvolvida
+            para catalogar, documentar e divulgar as espécies vegetais
+            presentes no ambiente escolar.
+        </p>
+    </div>
+
+    <div class="painel">
+        <h2>Objetivos</h2>
+        <p>
+            • Incentivar o conhecimento sobre a biodiversidade.<br>
+            • Registrar as plantas encontradas na escola.<br>
+            • Facilitar o acesso às informações botânicas.<br>
+            • Estimular a educação ambiental.<br>
+            • Promover a conservação das espécies vegetais.
+        </p>
+    </div>
+
+    <div class="painel">
+        <h2>Importância da pesquisa botânica</h2>
+        <p>
+            Conhecer as plantas ajuda a compreender os ecossistemas,
+            a conservação ambiental e a importância da vegetação
+            para o equilíbrio da natureza.
+        </p>
+    </div>
+
+    <div class="painel">
+        <h2>Fontes de consulta</h2>
+        <p>
+            Para pesquisas e validação das espécies, consulte
+            instituições e bases científicas, como:
+        </p>
+        <p>
+            <a href="https://www.gbif.org/" target="_blank" rel="noopener noreferrer">GBIF</a><br>
+            <a href="https://powo.science.kew.org/" target="_blank" rel="noopener noreferrer">Plants of the World Online</a><br>
+            <a href="https://floradobrasil.jbrj.gov.br/" target="_blank" rel="noopener noreferrer">Flora e Funga do Brasil</a><br>
+            <a href="https://www.in.gov.br/" target="_blank" rel="noopener noreferrer">Diário Oficial da União</a>
+        </p>
+    </div>
+</section>
+
+<!-- CADASTRO -->
+<section class="tela" id="admin">
+    <h2>Cadastro de nova espécie 🌱</h2>
+    <p>Preencha as informações para adicionar uma planta ao catálogo.</p>
+
+    <form class="formulario" id="formPlanta">
+
+        <h3>1. Identificação da espécie</h3>
+
+        <label>Nome popular</label>
+        <input id="nome" required placeholder="Ex: Ipê-amarelo">
+
+        <label>Nome científico / Espécie</label>
+        <input id="especie" required placeholder="Ex: Handroanthus albus">
+
+        <label for="categoria">Categoria no catálogo</label>
+        <select id="categoria" required>
+            <option value="nativa">Nativa do Brasil</option>
+            <option value="caatinga">Nativa da Caatinga</option>
+            <option value="medicinal">Planta medicinal</option>
+            <option value="exotica">Planta exótica</option>
+            <option value="outra">Outra / em classificação</option>
+        </select>
+
+        <label for="status">Situação da identificação</label>
+        <select id="status" required>
+            <option value="revisao">Em revisão / identificação pendente</option>
+            <option value="confirmada">Identificação conferida em fonte confiável</option>
+        </select>
+        <p class="nota-tecnica">Marque como confirmada somente depois de conferir o nome científico em uma fonte botânica confiável.</p>
+
+        <label>Fotografia</label>
+        <input type="file" id="foto" aria-label="Fotografia da espécie" accept="image/*" required>
+        <p class="nota-tecnica">A imagem será redimensionada para economizar espaço no armazenamento do navegador.</p>
+        <img id="preview" alt="Prévia da planta">
+
+        <h3 style="margin-top:25px">2. Classificação científica</h3>
+
+        <div class="grade">
+            <div>
+                <label>Reino</label>
+                <input id="reino" placeholder="Ex: Plantae">
+            </div>
+            <div>
+                <label>Família</label>
+                <input id="familia" placeholder="Ex: Bignoniaceae">
+            </div>
+            <div>
+                <label>Gênero</label>
+                <input id="genero" placeholder="Ex: Handroanthus">
+            </div>
+        </div>
+
+        <h3 style="margin-top:25px">3. Ficha botânica</h3>
+
+        <label>Ficha rápida</label>
+        <textarea id="rapida"
+        placeholder="Resumo das principais informações da espécie..."></textarea>
+
+        <label>Origem</label>
+        <textarea id="origem"
+        placeholder="Região de origem e distribuição geográfica..."></textarea>
+
+        <label>Descrição geral</label>
+        <textarea id="descricao"
+        placeholder="Porte, folhas, flores, frutos e características..."></textarea>
+
+        <label>Como reconhecer</label>
+        <textarea id="reconhecer"
+        placeholder="Características que ajudam a identificar a espécie..."></textarea>
+
+        <label>Onde encontrar</label>
+        <textarea id="encontrar"
+        placeholder="Habitat, bioma, regiões e local na escola..."></textarea>
+
+        <label>Usos medicinais tradicionais documentados</label>
+        <p class="nota-tecnica">Registre apenas usos descritos em fontes identificáveis. Não transforme esse campo em indicação de tratamento ou recomendação de consumo.</p>
+        <textarea id="medicinais"
+        placeholder="Registre apenas usos documentados e suas fontes..."></textarea>
+
+        <label>Métodos de preparo descritos nas fontes</label>
+        <p class="nota-tecnica">O registro tem finalidade documental e educativa; não é uma instrução para preparo ou uso.</p>
+        <textarea id="preparo"
+        placeholder="Informações históricas ou científicas documentadas..."></textarea>
+
+        <label>Cuidados e toxicidade</label>
+        <textarea id="cuidados"
+        placeholder="Possíveis riscos, toxicidade e cuidados conhecidos..."></textarea>
+
+        <label>Curiosidades e informações adicionais</label>
+        <textarea id="adicionais"
+        placeholder="Curiosidades, importância ecológica e outras informações..."></textarea>
+
+        <label>Local onde foi encontrada na escola</label>
+        <input id="local" placeholder="Ex: Jardim principal">
+
+        <label>Fontes e referências científicas</label>
+        <textarea id="fontes" required
+        placeholder="Informe links, livros, artigos ou instituições consultadas. Não cadastre informações sem indicar a fonte..."></textarea>
+
+        <button class="botao" type="submit">
+            + Salvar espécie no catálogo
+        </button>
+
+    </form>
+
+    <div class="painel">
+        <h3>Gerenciamento do acervo</h3>
+        <p>Exclua espécies cadastradas pelo administrador.</p>
+        <div id="gerenciar"></div>
+        <p class="nota-tecnica">A área de cadastro não possui autenticação. Em uma publicação na internet, qualquer visitante poderá cadastrar ou excluir registros. Use-a apenas em ambiente controlado até existir um sistema de usuários.</p>
+    </div>
+
+    <div class="painel">
+        <h3>📁 Exportação do projeto</h3>
+        <p>
+            Gere um arquivo HTML com o catálogo e todas as
+            informações e fotografias cadastradas.
+        </p>
+        <div class="botoes">
+            <button class="botao" type="button" onclick="exportarSite()">
+                ⬇ Exportar site atualizado
+            </button>
+            <button class="botao botao-sec" type="button" onclick="exportarBackup()">
+                Exportar backup dos dados (.json)
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- DETALHES DA ESPÉCIE -->
+<section class="tela" id="detalhes">
+    <button class="botao botao-sec"
+    onclick="abrirTela('catalogo')">← Voltar ao catálogo</button>
+
+    <div class="ficha" id="conteudoFicha"></div>
+</section>
+
+</main>
+
+<footer>
+    <h3 style="color:white">🌿Herbário do Sertão</h3>
+    <p>Conhecimento, biodiversidade e preservação ambiental.</p>
+    <p>Projeto educativo de catalogação botânica.</p>
+</footer>
+
+<script>
+
+// DADOS INICIAIS - usados também no site exportado.
+// O armazenamento é local ao navegador/dispositivo, não é um banco de dados online.
+const DADOS_INICIAIS = [];
+
+let plantas = [];
+try {
+    const salvas = localStorage.getItem("flora_escolar");
+    const dados = salvas ? JSON.parse(salvas) : DADOS_INICIAIS;
+    plantas = Array.isArray(dados) ? dados : DADOS_INICIAIS;
+} catch(e) {
+    plantas = DADOS_INICIAIS;
+    console.warn("Não foi possível ler o acervo salvo:", e);
+}
+
+let fotoCadastro = "";
+let fotoIdentificacao = "";
+
+function salvarDados() {
+    try {
+        localStorage.setItem("flora_escolar", JSON.stringify(plantas));
+        atualizar();
+        return true;
+    } catch(e) {
+        alert("Não foi possível salvar. O armazenamento do navegador pode estar cheio. Exporte um backup e reduza/remova algumas fotografias.");
+        return false;
+    }
+}
+
+// Normaliza acentos e caixa para tornar as buscas mais naturais.
+function normalizar(valor) {
+    return String(valor || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLocaleLowerCase("pt-BR")
+        .trim();
+}
+
+function campo(p, chave) {
+    return String((p && p[chave]) || "");
+}
+
+// Redimensiona fotografias antes de armazená-las em Base64.
+// Isso reduz bastante o consumo do localStorage, embora não substitua um servidor.
+function comprimirImagem(arquivo) {
+    return new Promise((resolve, reject) => {
+        if(!arquivo || !arquivo.type.startsWith("image/")) {
+            reject(new Error("Selecione um arquivo de imagem válido."));
+            return;
+        }
+        if(arquivo.size > 8 * 1024 * 1024) {
+            reject(new Error("A imagem original deve ter no máximo 8 MB."));
+            return;
+        }
+
+        const leitor = new FileReader();
+        leitor.onerror = () => reject(new Error("Não foi possível ler a imagem."));
+        leitor.onload = () => {
+            const imagem = new Image();
+            imagem.onerror = () => reject(new Error("A imagem não pôde ser aberta."));
+            imagem.onload = () => {
+                const limite = 1200;
+                const escala = Math.min(1, limite / Math.max(imagem.width, imagem.height));
+                const canvas = document.createElement("canvas");
+                canvas.width = Math.max(1, Math.round(imagem.width * escala));
+                canvas.height = Math.max(1, Math.round(imagem.height * escala));
+                const contexto = canvas.getContext("2d");
+                contexto.drawImage(imagem, 0, 0, canvas.width, canvas.height);
+                let resultado = canvas.toDataURL("image/jpeg", 0.78);
+                if(resultado.length > 1_500_000) {
+                    resultado = canvas.toDataURL("image/jpeg", 0.62);
+                }
+                if(resultado.length > 1_800_000) {
+                    reject(new Error("A imagem continua muito grande após a compressão. Escolha outra fotografia."));
+                    return;
+                }
+                resolve(resultado);
+            };
+            imagem.src = leitor.result;
+        };
+        leitor.readAsDataURL(arquivo);
+    });
+}
+
+function abrirTela(id,botao) {
+    document.querySelectorAll(".tela").forEach(t => {
+        t.classList.remove("ativa");
+    });
+
+    document.getElementById(id).classList.add("ativa");
+
+    document.querySelectorAll("nav button").forEach(b => {
+        b.classList.remove("active");
+        b.setAttribute("aria-pressed", "false");
+    });
+
+    if(botao) {
+        botao.classList.add("active");
+        botao.setAttribute("aria-pressed", "true");
+    }
+
+    window.scrollTo(0,0);
+}
+
+function elemento(tag, texto, classe) {
+    const el = document.createElement(tag);
+    el.textContent = texto || "";
+    if(classe) el.className = classe;
+    return el;
+}
+
+function criarCard(p) {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const img = document.createElement("img");
+    img.src = p.foto || "";
+    img.alt = p.nome || "Fotografia da planta";
+    img.loading = "lazy";
+
+    const conteudo = document.createElement("div");
+    conteudo.className = "card-conteudo";
+
+    conteudo.appendChild(elemento("h3","🌿 "+campo(p,"nome")));
+    conteudo.appendChild(elemento("p",campo(p,"especie")));
+
+    conteudo.appendChild(elemento("p",
+        p.familia ? "Família: "+p.familia : "Família não informada"
+    ));
+    const tagCategoria = elemento("span",
+        ({medicinal:"Medicinal",exotica:"Exótica",nativa:"Nativa do Brasil",caatinga:"Nativa da Caatinga",outra:"Outra"})[p.categoria || "outra"] || "Outra",
+        "tag");
+    const tagStatus = elemento("span",
+        p.status === "confirmada" ? "Identificação conferida" : "Em revisão",
+        p.status === "confirmada" ? "tag" : "tag revisao");
+    conteudo.append(tagCategoria,tagStatus);
+
+    const botao = elemento("button","Ver ficha completa","botao");
+    botao.onclick = () => abrirFicha(p.id);
+
+    conteudo.appendChild(botao);
+    card.append(img,conteudo);
+
+    return card;
+}
+
+function mostrarCatalogo() {
+    const termo = normalizar(document.getElementById("pesquisa").value);
+    const ordem = document.getElementById("ordem").value;
+    const categoria = document.getElementById("filtroCategoria").value;
+
+    let dados = plantas.filter(p => {
+        const correspondeTexto =
+            normalizar(p.nome).includes(termo) ||
+            normalizar(p.especie).includes(termo) ||
+            normalizar(p.familia).includes(termo) ||
+            normalizar(p.genero).includes(termo);
+        const correspondeCategoria = !categoria || (p.categoria || "outra") === categoria;
+        return correspondeTexto && correspondeCategoria;
+    });
+
+    dados.sort((a,b) =>
+        campo(a,"nome").localeCompare(campo(b,"nome"),"pt-BR")
+    );
+
+    if(ordem === "za") dados.reverse();
+
+    const lista = document.getElementById("listaCatalogo");
+    lista.innerHTML = "";
+
+    if(!dados.length) {
+        lista.appendChild(elemento("p","Nenhuma espécie encontrada.","vazio"));
+        return;
+    }
+
+    dados.forEach(p => lista.appendChild(criarCard(p)));
+}
+
+function abrirFicha(id) {
+    const p = plantas.find(x => x.id === id);
+    if(!p) return;
+
+    const ficha = document.getElementById("conteudoFicha");
+    ficha.innerHTML = "";
+
+    ficha.appendChild(elemento("h1",campo(p,"nome")));
+    ficha.appendChild(elemento("p",campo(p,"especie")));
+    ficha.appendChild(elemento("p",
+        p.status === "confirmada"
+            ? "Identificação conferida em fonte confiável."
+            : "Identificação em revisão: confirme os dados antes de utilizá-los.",
+        p.status === "confirmada" ? "tag" : "tag revisao"
+    ));
+    ficha.appendChild(elemento("p",
+        "Categoria: " + (({medicinal:"Medicinal",exotica:"Exótica",nativa:"Nativa do Brasil",caatinga:"Nativa da Caatinga",outra:"Outra"})[p.categoria || "outra"] || "Outra"),
+        "tag"
+    ));
+
+    const img = document.createElement("img");
+    img.src = p.foto || "";
+    img.alt = p.nome || "Fotografia da planta";
+    img.loading = "lazy";
+    img.className = "foto-ficha";
+    ficha.appendChild(img);
+
+    ficha.appendChild(elemento("h2","Classificação científica"));
+
+    const grade = document.createElement("div");
+    grade.className = "info-rapida";
+
+    [
+        ["Reino",p.reino],
+        ["Família",p.familia],
+        ["Gênero",p.genero],
+        ["Espécie",p.especie],
+        ["Categoria",({medicinal:"Medicinal",exotica:"Exótica",nativa:"Nativa do Brasil",caatinga:"Nativa da Caatinga",outra:"Outra"})[p.categoria || "outra"] || "Outra"]
+    ].forEach(([titulo,valor]) => {
+        const item = document.createElement("div");
+        item.className = "info-item";
+        item.appendChild(elemento("small",titulo));
+        item.appendChild(elemento("strong",valor || "Não informado"));
+        grade.appendChild(item);
+    });
+
+    ficha.appendChild(grade);
+
+    const secoes = [
+        ["Ficha rápida",p.rapida],
+        ["Origem",p.origem],
+        ["Descrição geral",p.descricao],
+        ["Como reconhecer",p.reconhecer],
+        ["Onde encontrar",p.encontrar],
+        ["Usos medicinais tradicionais",p.medicinais],
+        ["Métodos de preparo documentados",p.preparo],
+        ["Cuidados e toxicidade",p.cuidados],
+        ["Curiosidades e informações adicionais",p.adicionais],
+        ["Local na escola",p.local],
+        ["Fontes e referências",p.fontes]
+    ];
+
+    secoes.forEach(([titulo,valor]) => {
+        if(!valor) return;
+
+        ficha.appendChild(elemento("h2",titulo));
+        ficha.appendChild(elemento("p",valor));
+    });
+
+    const alerta = document.createElement("div");
+    alerta.className = "alerta";
+    alerta.textContent =
+        "Informação educativa: os registros medicinais não substituem orientação profissional. Não utilize ou prepare plantas para consumo sem identificação segura e avaliação de um profissional qualificado.";
+
+    ficha.appendChild(alerta);
+
+    abrirTela("detalhes");
+}
+
+function buscaAvancada() {
+    const nome = normalizar(document.getElementById("fNome").value);
+    const reino = normalizar(document.getElementById("fReino").value);
+    const familia = normalizar(document.getElementById("fFamilia").value);
+    const origem = normalizar(document.getElementById("fOrigem").value);
+
+    // Os filtros de campos diferentes são combinados com E;
+    // nome popular e científico são combinados com OU.
+    const resultados = plantas.filter(p =>
+        (!nome ||
+            normalizar(p.nome).includes(nome) ||
+            normalizar(p.especie).includes(nome)) &&
+        (!reino || normalizar(p.reino).includes(reino)) &&
+        (!familia || normalizar(p.familia).includes(familia)) &&
+        (!origem || normalizar(p.origem).includes(origem))
+    );
+
+    const area = document.getElementById("resultadoAvancado");
+    area.innerHTML = "";
+
+    if(!resultados.length) {
+        area.appendChild(elemento("p","Nenhuma espécie encontrada. Confira os filtros e tente novamente.","vazio"));
+        return;
+    }
+
+    resultados.forEach(p => area.appendChild(criarCard(p)));
+}
+
+function limparBusca() {
+    ["fNome","fReino","fFamilia","fOrigem"].forEach(id => {
+        document.getElementById(id).value = "";
+    });
+    document.getElementById("resultadoAvancado").innerHTML = "";
+}
+
+// PRÉVIA DA FOTO DO CADASTRO
+document.getElementById("foto").addEventListener("change", async function(e) {
+    const arquivo = e.target.files[0];
+    if(!arquivo) return;
+    try {
+        fotoCadastro = await comprimirImagem(arquivo);
+        const img = document.getElementById("preview");
+        img.src = fotoCadastro;
+        img.style.display = "block";
+    } catch(erro) {
+        fotoCadastro = "";
+        this.value = "";
+        alert(erro.message);
+    }
+});
+
+// CADASTRO
+document.getElementById("formPlanta").addEventListener("submit",function(e) {
+    e.preventDefault();
+
+    if(!fotoCadastro) {
+        alert("Insira uma fotografia válida.");
+        return;
+    }
+
+    const campos = [
+        "nome","especie","categoria","status","reino","familia","genero",
+        "rapida","origem","descricao","reconhecer",
+        "encontrar","medicinais","preparo","cuidados",
+        "adicionais","local","fontes"
+    ];
+
+    const planta = {
+        id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()),
+        foto: fotoCadastro
+    };
+
+    campos.forEach(c => {
+        planta[c] = document.getElementById(c).value.trim();
+    });
+
+    plantas.push(planta);
+    if(!salvarDados()) {
+        plantas.pop();
+        return;
+    }
+
+    this.reset();
+    fotoCadastro = "";
+    document.getElementById("preview").removeAttribute("src");
+    document.getElementById("preview").style.display = "none";
+
+    alert("Espécie cadastrada com sucesso! 🌿");
+    abrirTela("catalogo");
+});
+
+// IDENTIFICAÇÃO VISUAL (registro de observação; não identifica automaticamente)
+async function previewIdentificacao(e) {
+    const arquivo = e.target.files[0];
+    if(!arquivo) return;
+    try {
+        fotoIdentificacao = await comprimirImagem(arquivo);
+        const img = document.getElementById("identPreview");
+        img.src = fotoIdentificacao;
+        img.style.display = "block";
+    } catch(erro) {
+        fotoIdentificacao = "";
+        e.target.value = "";
+        alert(erro.message);
+    }
+}
+
+function registrarIdentificacao() {
+    if(!fotoIdentificacao) {
+        alert("Insira uma fotografia primeiro.");
+        return;
+    }
+
+    const registro = {
+        foto:fotoIdentificacao,
+        observacao:document.getElementById("observacaoIdent").value
+    };
+
+    const area = document.getElementById("respostaIdent");
+    area.innerHTML = "";
+
+    const img = document.createElement("img");
+    img.src = registro.foto;
+    img.style.maxWidth = "180px";
+    img.style.borderRadius = "10px";
+
+    area.appendChild(img);
+    area.appendChild(elemento("h3","Fotografia registrada!"));
+    area.appendChild(elemento("p",registro.observacao ||
+        "Nenhuma característica informada."));
+    area.appendChild(elemento("p",
+        "Consulte um especialista para confirmar a identificação."));
+
+    fotoIdentificacao = "";
+    document.getElementById("fotoIdent").value = "";
+    document.getElementById("observacaoIdent").value = "";
+    document.getElementById("identPreview").style.display = "none";
+}
+
+// GERENCIAMENTO
+function gerenciar() {
+    const area = document.getElementById("gerenciar");
+    area.innerHTML = "";
+
+    plantas.forEach(p => {
+        const linha = document.createElement("div");
+        linha.style.padding = "12px 0";
+        linha.style.borderBottom = "1px solid #ddd";
+
+        linha.appendChild(elemento("strong",p.nome+" "));
+
+        const excluir = elemento("button","Excluir","botao botao-perigo");
+        excluir.onclick = () => {
+            if(confirm("Deseja excluir "+p.nome+"?")) {
+                const anterior = plantas;
+                plantas = plantas.filter(x => x.id !== p.id);
+                if(!salvarDados()) plantas = anterior;
+            }
+        };
+
+        linha.appendChild(excluir);
+        area.appendChild(linha);
+    });
+}
+
+function atualizar() {
+    mostrarCatalogo();
+    gerenciar();
+
+    document.getElementById("totalInicio").textContent =
+        plantas.length + (plantas.length === 1 ?
+        " espécie cadastrada." : " espécies cadastradas.");
+}
+
+// BACKUP PORTÁVEL: permite guardar os registros separadamente do HTML.
+function exportarBackup() {
+    if(!plantas.length) {
+        alert("Não há espécies cadastradas para exportar.");
+        return;
+    }
+    const arquivo = new Blob(
+        [JSON.stringify({versao:1, exportadoEm:new Date().toISOString(), plantas}, null, 2)],
+        {type:"application/json;charset=utf-8"}
+    );
+    const url = URL.createObjectURL(arquivo);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "backup_herbario_do_sertao.json";
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// EXPORTAR O SITE COM TODO O ACERVO
+function exportarSite() {
+    if(!plantas.length) {
+        alert("Cadastre pelo menos uma espécie.");
+        return;
+    }
+
+    let codigo = "<!DOCTYPE html>\n" +
+        document.documentElement.outerHTML;
+
+    const dados = JSON.stringify(plantas)
+        .replace(/</g,"\\u003c")
+        .replace(/>/g,"\\u003e")
+        .replace(/&/g,"\\u0026");
+
+    codigo = codigo.replace(
+        "const DADOS_INICIAIS = [];",
+        "const DADOS_INICIAIS = "+dados+";"
+    );
+
+    const arquivo = new Blob(
+        [codigo],
+        {type:"text/html;charset=utf-8"}
+    );
+
+    const url = URL.createObjectURL(arquivo);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "flora_escolar_atualizada.html";
+    link.click();
+
+    setTimeout(() => URL.revokeObjectURL(url),1000);
+}
+
+atualizar();
+
+</script>
+</body>
+</html>
